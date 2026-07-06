@@ -1,0 +1,144 @@
+import type { RoadmapWeek } from '../types'
+
+export const roadmap: RoadmapWeek[] = [
+  {
+    week: 1,
+    title: 'Foundations: Linear Models & Statistics Refresh',
+    goals: [
+      'Deeply understand Linear Regression: derive the Normal Equation by hand, not just recall it.',
+      'Implement Linear Regression from scratch with gradient descent (Code Lab).',
+      'Work through the Statistics & Probability topic end to end — Bayes\' theorem, distributions, hypothesis testing.',
+      'Drill 15-20 SQL window function problems.',
+    ],
+    algorithmSlugs: ['linear-regression', 'regularization'],
+    interviewSlugs: ['statistics-probability', 'sql-for-data-science'],
+  },
+  {
+    week: 2,
+    title: 'Classification Fundamentals',
+    goals: [
+      'Master Logistic Regression: derive the cross-entropy gradient, understand log-odds interpretation.',
+      'Implement Logistic Regression and KNN from scratch (Code Lab).',
+      'Learn Naive Bayes and when the independence assumption still works in practice.',
+      'Start the Python & Pandas prep topic — focus on vectorization and missing-data mechanisms.',
+    ],
+    algorithmSlugs: ['logistic-regression', 'knn', 'naive-bayes'],
+    interviewSlugs: ['python-pandas-coding'],
+  },
+  {
+    week: 3,
+    title: 'Trees, Ensembles & Your First Portfolio Project',
+    goals: [
+      'Understand Decision Trees deeply — Gini/entropy, pruning, why they overfit.',
+      'Master Random Forest: derive why decorrelation reduces ensemble variance.',
+      'Start the Churn Prediction project end-to-end (EDA through business-impact framing).',
+      'Take the Practice Quiz for regression + classification categories, review every wrong answer.',
+    ],
+    algorithmSlugs: ['decision-trees', 'random-forest'],
+    projectSlugs: ['churn-prediction'],
+  },
+  {
+    week: 4,
+    title: 'Gradient Boosting Deep Dive',
+    goals: [
+      'Fully understand Gradient Boosting: pseudo-residuals, shrinkage, and XGBoost\'s regularized objective.',
+      'Compare XGBoost vs LightGBM vs CatBoost hands-on — train all three on the same dataset.',
+      'Finish the Churn Prediction project, write up the business-impact section.',
+      'Review SVM theory (margins, kernel trick, dual formulation) even if you rarely use it in production.',
+    ],
+    algorithmSlugs: ['gradient-boosting', 'svm'],
+    projectSlugs: ['churn-prediction'],
+  },
+  {
+    week: 5,
+    title: 'Unsupervised Learning & a Segmentation Project',
+    goals: [
+      'Master K-Means: prove Lloyd\'s algorithm converges, understand K-Means++.',
+      'Learn PCA\'s linear algebra deeply — derive why eigenvectors of the covariance matrix maximize variance.',
+      'Learn Hierarchical Clustering and linkage criteria.',
+      'Apply clustering + PCA on a customer segmentation dataset as a mini-project.',
+    ],
+    algorithmSlugs: ['kmeans', 'hierarchical-clustering', 'pca'],
+  },
+  {
+    week: 6,
+    title: 'A/B Testing & Causal Thinking',
+    goals: [
+      'Work through the A/B Testing & Pricing Experimentation project fully, including a simulated power analysis.',
+      'Implement CUPED variance reduction from scratch.',
+      'Review correlation vs causation, confounders, and the three requirements for causal claims.',
+      'Practice 5-6 "metric dropped, diagnose why" case-study prompts out loud or with a study partner.',
+    ],
+    projectSlugs: ['ab-testing-pricing'],
+    interviewSlugs: ['case-study-questions'],
+  },
+  {
+    week: 7,
+    title: 'Credit Risk / Fraud — Interpretability & Fairness',
+    goals: [
+      'Build the Credit Risk Scoring project including a WOE-logistic scorecard, not just a black-box model.',
+      'Learn KS statistic and Gini coefficient cold — the actual credit-risk industry metrics.',
+      'Read about reject inference and be ready to discuss it unprompted.',
+      'Start the Fraud Detection project — focus on extreme imbalance and time-based validation.',
+    ],
+    projectSlugs: ['credit-risk-scoring', 'fraud-detection'],
+  },
+  {
+    week: 8,
+    title: 'Time Series & Recommenders',
+    goals: [
+      'Build the Demand Forecasting project with proper rolling-origin validation.',
+      'Understand the retrieve-then-rank architecture for recommendation systems.',
+      'Build (at least a scaled-down version of) the Recommendation System project.',
+      'Take the Practice Quiz for the Unsupervised + Ensembles categories.',
+    ],
+    projectSlugs: ['demand-forecasting', 'recommendation-system'],
+  },
+  {
+    week: 9,
+    title: 'Deep Learning Foundations',
+    goals: [
+      'Derive backpropagation by hand for a 2-layer network — don\'t just recall the formula.',
+      'Implement a small neural network from scratch (Code Lab) and get it to solve a non-linear boundary problem.',
+      'Learn CNNs: convolution arithmetic, receptive fields, transfer learning.',
+      'Build (or extend) the Visual Quality Inspection project using a pretrained backbone.',
+    ],
+    algorithmSlugs: ['neural-networks-backprop', 'cnn'],
+    projectSlugs: ['image-classification-defect'],
+  },
+  {
+    week: 10,
+    title: 'Sequence Models, Attention & an NLP Project',
+    goals: [
+      'Understand vanishing gradients in RNNs and exactly how LSTM gates fix it.',
+      'Master scaled dot-product self-attention — derive the √d_k scaling reasoning.',
+      'Build the Sentiment & Topic Analysis project, comparing classical NLP, fine-tuned transformer, and LLM zero-shot.',
+      'Review the Transformers interview Q&A until you can explain multi-head attention fluently.',
+    ],
+    algorithmSlugs: ['rnn-lstm', 'transformers-attention'],
+    projectSlugs: ['sentiment-analysis-nlp'],
+  },
+  {
+    week: 11,
+    title: 'ML System Design & Mock Interviews',
+    goals: [
+      'Work through the ML System Design topic and practice 4-5 prompts using the 8-step structure.',
+      'Do at least 2 full mock system-design interviews with a peer, recording yourself if possible.',
+      'Finish the Delivery ETA or Resume Screening project to round out your portfolio breadth.',
+      'Re-take the full Practice Quiz across all categories — target 90%+.',
+    ],
+    interviewSlugs: ['ml-system-design'],
+    projectSlugs: ['delivery-eta-prediction', 'resume-screening-nlp'],
+  },
+  {
+    week: 12,
+    title: 'Behavioral, Negotiation & Company-Tier Targeting',
+    goals: [
+      'Write out 6-8 STAR-format stories covering conflict, failure, ambiguity, feedback, and technical depth.',
+      'Read the Company-Tier Expectations topic and tailor your narrative to your target company\'s tier.',
+      'Research comp ranges (Levels.fyi India, AmbitionBox, Glassdoor) for your specific target roles.',
+      'Do a final full pass: re-read every algorithm\'s Interview Q&A section out loud, polish your project one-liners.',
+    ],
+    interviewSlugs: ['behavioral-interviews-india', 'company-tier-expectations'],
+  },
+]
