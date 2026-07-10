@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { quizBank, quizCategories } from '../data/quizBank'
+import { quizBank, quizCategories, quizDifficulties } from '../data/quizBank'
+import type { QuestionDifficulty } from '../types'
 import { useProgress } from '../lib/progress'
 
 function shuffle<T>(arr: T[]): T[] {
@@ -11,8 +12,17 @@ function shuffle<T>(arr: T[]): T[] {
   return copy
 }
 
+const difficultyColors: Record<QuestionDifficulty, string> = {
+  Easy: 'text-[var(--color-accent2)] border-[var(--color-accent2)]',
+  Medium: 'text-[var(--color-accent3)] border-[var(--color-accent3)]',
+  Hard: 'text-[var(--color-danger)] border-[var(--color-danger)]',
+}
+
+type DifficultyFilter = 'All' | QuestionDifficulty
+
 export default function Practice() {
   const [category, setCategory] = useState('All')
+  const [difficulty, setDifficulty] = useState<DifficultyFilter>('All')
   const [started, setStarted] = useState(false)
   const [questions, setQuestions] = useState<typeof quizBank>([])
   const [index, setIndex] = useState(0)
@@ -22,8 +32,11 @@ export default function Practice() {
   const { quizBest, recordQuizScore } = useProgress()
 
   const pool = useMemo(
-    () => (category === 'All' ? quizBank : quizBank.filter((q) => q.category === category)),
-    [category],
+    () =>
+      quizBank.filter(
+        (q) => (category === 'All' || q.category === category) && (difficulty === 'All' || q.difficulty === difficulty),
+      ),
+    [category, difficulty],
   )
 
   const startQuiz = () => {
@@ -60,8 +73,8 @@ export default function Practice() {
         <div>
           <h1 className="text-2xl font-extrabold text-[var(--color-text-bright)]">Practice Quiz</h1>
           <p className="mt-2 text-sm text-[var(--color-text-dim)]">
-            {quizBank.length} questions across regression, classification, ensembles, unsupervised learning, deep
-            learning, statistics, SQL, and ML system design. Every answer includes a full explanation.
+            {quizBank.length}+ questions across ML theory, statistics, SQL, Python/pandas, A/B testing, case studies,
+            and system design — tagged Easy/Medium/Hard, with a full explanation for every answer.
           </p>
         </div>
 
@@ -93,9 +106,31 @@ export default function Practice() {
           </div>
         </div>
 
+        <div>
+          <h2 className="mb-2 text-sm font-semibold text-[var(--color-text-bright)]">Difficulty</h2>
+          <div className="flex flex-wrap gap-2">
+            {(['All', ...quizDifficulties] as DifficultyFilter[]).map((d) => (
+              <button
+                key={d}
+                onClick={() => setDifficulty(d)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  difficulty === d
+                    ? d === 'All'
+                      ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
+                      : difficultyColors[d]
+                    : 'border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text-bright)]'
+                }`}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button
           onClick={startQuiz}
-          className="rounded-lg bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-[#0b0d12] hover:opacity-90"
+          disabled={pool.length === 0}
+          className="rounded-lg bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-[#0b0d12] hover:opacity-90 disabled:opacity-50"
         >
           {finished ? 'Retake Quiz' : 'Start Quiz'} ({pool.length} questions)
         </button>
@@ -115,7 +150,12 @@ export default function Practice() {
       </div>
 
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-5">
-        <span className="text-xs font-medium text-[var(--color-accent)]">{current.category}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-[var(--color-accent)]">{current.category}</span>
+          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${difficultyColors[current.difficulty]}`}>
+            {current.difficulty}
+          </span>
+        </div>
         <h2 className="mt-2 text-lg font-semibold text-[var(--color-text-bright)]">{current.question}</h2>
 
         <div className="mt-4 space-y-2">

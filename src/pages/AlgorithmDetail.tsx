@@ -5,7 +5,7 @@ import { getExerciseForAlgorithm } from '../data/codeExercises'
 import MarkdownContent from '../components/MarkdownContent'
 import { DifficultyBadge, Tag } from '../components/Badge'
 import { useProgress } from '../lib/progress'
-import CodeBlock from '../components/CodeBlock'
+import PythonPlayground from '../components/PythonPlayground'
 
 type Tab = 'theory' | 'code' | 'qa'
 
@@ -14,7 +14,6 @@ export default function AlgorithmDetail() {
   const algo = slug ? getAlgorithmBySlug(slug) : undefined
   const exercise = slug ? getExerciseForAlgorithm(slug) : undefined
   const [tab, setTab] = useState<Tab>('theory')
-  const [showSolution, setShowSolution] = useState(false)
   const [openQA, setOpenQA] = useState<number | null>(0)
   const { algorithms: progressMap, toggleAlgorithm } = useProgress()
 
@@ -88,23 +87,7 @@ export default function AlgorithmDetail() {
                 <h3 className="font-semibold text-[var(--color-text-bright)]">Exercise</h3>
                 <p className="mt-1 text-sm text-[var(--color-text-dim)]">{exercise.prompt}</p>
               </div>
-              <div>
-                <h3 className="mb-2 text-sm font-semibold text-[var(--color-text-bright)]">Starter Code</h3>
-                <CodeBlock code={exercise.starterCode} />
-              </div>
-              <div>
-                <button
-                  onClick={() => setShowSolution((s) => !s)}
-                  className="rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm font-medium text-[var(--color-text)] hover:border-[var(--color-accent)]"
-                >
-                  {showSolution ? 'Hide Solution' : 'Reveal Solution'}
-                </button>
-                {showSolution && (
-                  <div className="mt-3">
-                    <CodeBlock code={exercise.solutionCode} />
-                  </div>
-                )}
-              </div>
+              <PythonPlayground starterCode={exercise.starterCode} solutionCode={exercise.solutionCode} />
             </>
           ) : (
             <p className="text-sm text-[var(--color-text-dim)]">No code exercise yet for this algorithm.</p>

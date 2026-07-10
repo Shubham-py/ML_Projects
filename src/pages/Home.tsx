@@ -3,18 +3,23 @@ import { algorithms } from '../data/algorithms'
 import { projects } from '../data/projects'
 import { interviewTopics } from '../data/interview'
 import { quizBank } from '../data/quizBank'
+import { sqlExercises } from '../data/sqlExercises'
+import { pythonExercises } from '../data/pythonExercises'
 
 const stats = [
   { label: 'Algorithms, in full depth', value: algorithms.length },
   { label: 'End-to-end portfolio projects', value: projects.length },
   { label: 'Interview deep-dive topics', value: interviewTopics.length },
-  { label: 'Practice quiz questions', value: quizBank.length },
+  {
+    label: 'Total practice questions & runnable exercises',
+    value: quizBank.length + sqlExercises.length + pythonExercises.length + algorithms.length,
+  },
 ]
 
 const pillars = [
   {
     title: 'Algorithms — Math, Not Just Vibes',
-    body: 'Every algorithm page derives the math (not just states it), covers assumptions, complexity, pitfalls, and a from-scratch Python implementation you write yourself in the Code Lab.',
+    body: 'Every algorithm page derives the math (not just states it), covers assumptions, complexity, pitfalls, and a runnable from-scratch Python implementation right in the Code Lab — click Run and watch it execute in your browser.',
     to: '/algorithms',
     cta: 'Study the algorithms',
   },
@@ -25,14 +30,26 @@ const pillars = [
     cta: 'Build your portfolio',
   },
   {
+    title: 'SQL Lab — Write & Run Real Queries',
+    body: `${sqlExercises.length} SQL problems, easy to genuinely hard (gaps-and-islands, cohort retention, window frames), running against a real in-browser SQLite engine — no setup, just write and run.`,
+    to: '/sql-practice',
+    cta: 'Open the SQL Lab',
+  },
+  {
+    title: 'Python & Pandas Lab — Write & Run Real Code',
+    body: `${pythonExercises.length} coding exercises spanning algorithms, data structures, and production pandas idioms — powered by a real in-browser Python runtime (numpy, pandas, scikit-learn included).`,
+    to: '/python-practice',
+    cta: 'Open the Python Lab',
+  },
+  {
     title: 'Interview Prep Beyond Just ML',
-    body: 'Statistics, SQL, Python/pandas, ML system design, case studies, and India-specific behavioral + company-tier (startup/mid/big tech) prep — the parts most candidates skip and lose offers over.',
+    body: 'Statistics, SQL, Python/pandas, ML system design, case studies, A/B testing, and India-specific behavioral + company-tier (startup/mid/big tech) prep — the parts most candidates skip and lose offers over.',
     to: '/interview-prep',
     cta: 'Prep the full loop',
   },
   {
     title: 'Practice Until It Sticks',
-    body: 'A quiz bank across every category with explanations, plus a 12-week structured roadmap tying algorithms, projects, and interview topics into one plan.',
+    body: `${quizBank.length}+ quiz questions tagged Easy/Medium/Hard across every category, plus a 12-week structured roadmap tying algorithms, projects, and interview topics into one plan.`,
     to: '/practice',
     cta: 'Start practicing',
   },

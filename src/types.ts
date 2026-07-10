@@ -1,4 +1,5 @@
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced'
+export type QuestionDifficulty = 'Easy' | 'Medium' | 'Hard'
 
 export interface QA {
   q: string
@@ -42,11 +43,36 @@ export interface RoadmapWeek {
   algorithmSlugs?: string[]
   projectSlugs?: string[]
   interviewSlugs?: string[]
+  labLinks?: { label: string; to: string }[]
+}
+
+export interface SqlExercise {
+  slug: string
+  title: string
+  difficulty: QuestionDifficulty
+  tags: string[]
+  prompt: string
+  setupSql: string
+  starterQuery: string
+  solutionQuery: string
+  explanation: string
+}
+
+export interface PythonExercise {
+  slug: string
+  title: string
+  difficulty: QuestionDifficulty
+  tags: string[]
+  prompt: string
+  starterCode: string
+  solutionCode: string
+  explanation: string
 }
 
 export interface QuizQuestion {
   id: string
   category: string
+  difficulty: QuestionDifficulty
   question: string
   options: string[]
   correctIndex: number

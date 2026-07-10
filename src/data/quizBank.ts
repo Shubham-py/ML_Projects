@@ -1,10 +1,11 @@
 import type { QuizQuestion } from '../types'
 
 export const quizBank: QuizQuestion[] = [
-  // Regression
+  // ============ Regression ============
   {
     id: 'reg-1',
     category: 'Regression',
+    difficulty: 'Medium',
     question: 'In OLS linear regression, what causes the (X^T X) matrix to become non-invertible?',
     options: [
       'The target variable is not normally distributed',
@@ -18,6 +19,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'reg-2',
     category: 'Regression',
+    difficulty: 'Medium',
     question: 'Why does Lasso (L1) regression produce exactly-zero coefficients while Ridge (L2) does not?',
     options: [
       'Lasso uses a different loss function entirely, not squared error',
@@ -31,6 +33,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'reg-3',
     category: 'Regression',
+    difficulty: 'Easy',
     question: 'A model has high R² on training data but poor R² on test data. What does this most likely indicate?',
     options: [
       'The model has high bias',
@@ -44,6 +47,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'reg-4',
     category: 'Regression',
+    difficulty: 'Medium',
     question: 'In logistic regression, why is cross-entropy loss preferred over mean squared error?',
     options: [
       'Cross-entropy is faster to compute',
@@ -54,10 +58,68 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 1,
     explanation: 'Plugging sigmoid into MSE yields a non-convex function of the weights, so gradient descent isn\'t guaranteed to reach the global minimum. Cross-entropy (derived from the Bernoulli likelihood) is convex for logistic regression.',
   },
-  // Classification
+  {
+    id: 'reg-5',
+    category: 'Regression',
+    difficulty: 'Hard',
+    question: 'Your OLS residuals show a clear funnel shape (variance increases with fitted values). What exactly breaks, and what still holds?',
+    options: [
+      'The coefficient estimates become biased and inconsistent',
+      'Coefficient estimates remain unbiased, but standard errors (and thus p-values/confidence intervals) become invalid',
+      'Nothing breaks; heteroscedasticity only matters for classification models',
+      'R² becomes negative',
+    ],
+    correctIndex: 1,
+    explanation: 'Heteroscedasticity does not bias the OLS point estimates (the Gauss-Markov unbiasedness proof does not require constant variance), but it does violate the assumption behind the standard formula for coefficient standard errors, invalidating hypothesis tests and CIs unless you use robust (White/Huber) standard errors.',
+  },
+  {
+    id: 'reg-6',
+    category: 'Regression',
+    difficulty: 'Medium',
+    question: 'A feature has a Variance Inflation Factor (VIF) of 12. What should you conclude?',
+    options: [
+      'The feature is a strong, reliable predictor and should be kept as-is',
+      'The feature is severely collinear with other predictors, inflating its coefficient variance and making it unstable',
+      'The feature has 12% missing data',
+      'VIF has no relevance to linear regression diagnostics',
+    ],
+    correctIndex: 1,
+    explanation: 'VIF = 1/(1-R_i²), where R_i² is from regressing that feature on all other features. VIF > 10 is a common red flag for severe multicollinearity, meaning the coefficient estimate is highly sensitive to small data changes.',
+  },
+  {
+    id: 'reg-7',
+    category: 'Regression',
+    difficulty: 'Hard',
+    question: 'Under what specific noise assumption is minimizing mean squared error mathematically equivalent to Maximum Likelihood Estimation?',
+    options: [
+      'Uniform noise',
+      'Gaussian (normal) noise with constant variance',
+      'Poisson noise',
+      'No noise assumption is needed — they are always equivalent',
+    ],
+    correctIndex: 1,
+    explanation: 'If y = f(x) + ε with ε ~ N(0, σ²), the log-likelihood of the data is a linear function of negative squared error; maximizing that likelihood is exactly equivalent to minimizing squared error. A different noise distribution (e.g., Laplace) implies a different optimal loss (e.g., absolute error).',
+  },
+  {
+    id: 'reg-8',
+    category: 'Regression',
+    difficulty: 'Medium',
+    question: 'Why does Elastic Net often handle groups of correlated features better than plain Lasso?',
+    options: [
+      'Elastic Net removes correlated features entirely before fitting',
+      'Its L2 component induces a "grouping effect," shrinking correlated features together rather than arbitrarily picking just one',
+      'Elastic Net does not use regularization at all',
+      'Lasso cannot run on datasets with correlated features',
+    ],
+    correctIndex: 1,
+    explanation: 'Plain Lasso tends to arbitrarily select one feature from a correlated group and zero out the rest, which is unstable across resamples. Elastic Net\'s combined L1+L2 penalty keeps correlated features together while still allowing sparsity.',
+  },
+
+  // ============ Classification ============
   {
     id: 'cls-1',
     category: 'Classification',
+    difficulty: 'Easy',
     question: 'Why must features be scaled before using KNN, but not before training a decision tree?',
     options: [
       'KNN uses distance metrics sensitive to feature scale; trees split on threshold comparisons per feature, invariant to monotonic scaling',
@@ -71,6 +133,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'cls-2',
     category: 'Classification',
+    difficulty: 'Hard',
     question: 'What is the primary reason Naive Bayes still performs well despite its false independence assumption?',
     options: [
       'The independence assumption is usually actually true for text data',
@@ -84,6 +147,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'cls-3',
     category: 'Classification',
+    difficulty: 'Easy',
     question: 'In a decision tree, what does a Gini impurity of 0 at a leaf node mean?',
     options: [
       'The leaf has an equal number of samples from every class',
@@ -97,6 +161,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'cls-4',
     category: 'Classification',
+    difficulty: 'Medium',
     question: 'What is the role of the hyperparameter C in a soft-margin SVM?',
     options: [
       'It controls the kernel bandwidth',
@@ -110,20 +175,74 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'cls-5',
     category: 'Classification',
+    difficulty: 'Easy',
     question: 'A dataset has 99% negative class and 1% positive class. Which metric is most misleading to report alone?',
-    options: [
-      'Precision-Recall AUC',
-      'Accuracy',
-      'F1 score',
-      'Recall',
-    ],
+    options: ['Precision-Recall AUC', 'Accuracy', 'F1 score', 'Recall'],
     correctIndex: 1,
     explanation: 'A model that always predicts "negative" achieves 99% accuracy while catching zero positives — accuracy is meaningless under severe imbalance. PR-AUC/Recall/Precision are far more informative here.',
   },
-  // Ensembles
+  {
+    id: 'cls-6',
+    category: 'Classification',
+    difficulty: 'Medium',
+    question: 'Lowering a classifier\'s decision threshold from 0.5 to 0.3 typically has what effect?',
+    options: [
+      'Increases precision, decreases recall',
+      'Increases recall, typically at the cost of precision (more positives predicted overall)',
+      'Has no effect unless the model is retrained',
+      'Always increases both precision and recall simultaneously',
+    ],
+    correctIndex: 1,
+    explanation: 'A lower threshold means more instances get classified as positive, catching more true positives (higher recall) but also more false positives (typically lower precision) — this is the precision-recall tradeoff, tunable via the operating threshold without retraining.',
+  },
+  {
+    id: 'cls-7',
+    category: 'Classification',
+    difficulty: 'Hard',
+    question: 'Model A has higher AUC than Model B, but Model B\'s predicted probabilities are much better calibrated (a predicted 0.7 really does correspond to ~70% empirical frequency). What does this tell you?',
+    options: [
+      'This is impossible — higher AUC always implies better calibration',
+      'AUC measures ranking/discrimination ability, not calibration — a model can rank well but still produce systematically over/under-confident probabilities',
+      'Model B must have a bug since AUC is the only metric that matters',
+      'Calibration and AUC always move together in practice',
+    ],
+    correctIndex: 1,
+    explanation: 'AUC only cares about whether positive examples are ranked above negative ones — it is invariant to any monotonic transformation of the scores. Calibration (measured via a reliability diagram or Brier score) is a separate property: whether the raw probability values themselves are trustworthy. Both matter — use calibration curves and Platt scaling/isotonic regression to fix a well-ranking-but-miscalibrated model.',
+  },
+  {
+    id: 'cls-8',
+    category: 'Classification',
+    difficulty: 'Medium',
+    question: 'What is the key difference between One-vs-Rest (OvR) and One-vs-One (OvO) strategies for extending a binary classifier to multiclass problems?',
+    options: [
+      'OvR trains K binary classifiers (each class vs. all others); OvO trains K(K-1)/2 classifiers (every pair of classes) — OvO scales worse with many classes but each sub-problem is more balanced',
+      'They are identical in every respect',
+      'OvO can only be used with neural networks',
+      'OvR always requires more total training time than OvO for any number of classes',
+    ],
+    correctIndex: 0,
+    explanation: 'OvR needs K classifiers, one per class against the rest (class imbalance can be an issue). OvO needs K(K-1)/2 classifiers — more of them as K grows, but each is trained on only two classes\' data, which can help when classes are very imbalanced or a linear boundary doesn\'t separate all classes well simultaneously.',
+  },
+  {
+    id: 'cls-9',
+    category: 'Classification',
+    difficulty: 'Medium',
+    question: 'Why is 0.5 not automatically the "correct" decision threshold for a binary classifier in a real business setting?',
+    options: [
+      '0.5 is always mathematically optimal regardless of context',
+      'The optimal threshold depends on the relative costs of false positives vs. false negatives, which 0.5 ignores entirely',
+      'Thresholds only matter for multiclass problems',
+      'Sklearn requires you to always use 0.5',
+    ],
+    correctIndex: 1,
+    explanation: 'The threshold should be chosen to minimize expected business cost given the false-positive and false-negative cost asymmetry (e.g., in fraud detection, missing fraud is usually far costlier than a false alarm), which is almost never symmetric enough to make 0.5 the right choice by default.',
+  },
+
+  // ============ Ensembles ============
   {
     id: 'ens-1',
     category: 'Ensembles',
+    difficulty: 'Medium',
     question: 'What specifically differentiates Random Forest from plain Bagging of decision trees?',
     options: [
       'Random Forest uses boosting instead of bagging',
@@ -137,6 +256,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'ens-2',
     category: 'Ensembles',
+    difficulty: 'Medium',
     question: 'In Gradient Boosting, what does a new tree at each stage learn to predict?',
     options: [
       'The original target variable y directly',
@@ -150,6 +270,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'ens-3',
     category: 'Ensembles',
+    difficulty: 'Hard',
     question: 'Why does adding more trees to a Random Forest not cause overfitting the way adding more boosting rounds can?',
     options: [
       'Random Forest trees are always shallower than boosting trees',
@@ -163,6 +284,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'ens-4',
     category: 'Ensembles',
+    difficulty: 'Medium',
     question: 'LightGBM\'s leaf-wise tree growth strategy differs from XGBoost\'s default level-wise growth in what way?',
     options: [
       'Leaf-wise always splits the leaf with the greatest loss reduction regardless of depth, which can converge faster but risks overfitting on small data',
@@ -173,10 +295,68 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 0,
     explanation: 'Level-wise expands every node at the current depth before going deeper (more balanced, naturally regularized); leaf-wise greedily splits whatever leaf reduces loss most, producing potentially deep, unbalanced trees that need num_leaves/depth constraints.',
   },
-  // Unsupervised
+  {
+    id: 'ens-5',
+    category: 'Ensembles',
+    difficulty: 'Hard',
+    question: 'Why is Mean Decrease in Impurity (MDI) feature importance biased toward high-cardinality features, and what is the more reliable alternative?',
+    options: [
+      'MDI is never biased; there is no better alternative',
+      'High-cardinality features offer more possible split points, increasing the chance of finding a spuriously good split by chance; permutation importance (measuring performance drop when a feature is shuffled) is more reliable',
+      'MDI is biased toward low-cardinality features instead',
+      'The fix is to always remove high-cardinality features before training',
+    ],
+    correctIndex: 1,
+    explanation: 'A feature with many unique values has vastly more candidate thresholds to try, so it is statistically more likely to produce a seemingly strong split purely by chance, inflating its impurity-based importance. Permutation importance instead measures the actual drop in out-of-sample performance when a feature\'s values are shuffled, which is not affected by cardinality.',
+  },
+  {
+    id: 'ens-6',
+    category: 'Ensembles',
+    difficulty: 'Medium',
+    question: 'What is the core idea behind "stacking" (stacked generalization) as an ensembling technique?',
+    options: [
+      'Training the same model architecture multiple times with different random seeds and averaging',
+      'Training a meta-model that learns how to best combine the (out-of-fold) predictions of several diverse base models',
+      'Simply averaging the predictions of all models with equal weight, with no additional training',
+      'Stacking is another name for bagging',
+    ],
+    correctIndex: 1,
+    explanation: 'Stacking trains several diverse base learners (e.g., a GBM, a neural net, a linear model), generates their out-of-fold predictions to avoid leakage, and then trains a meta-model (often a simple linear/logistic model) on those predictions to learn the optimal combination — often outperforming any single model or simple averaging.',
+  },
+  {
+    id: 'ens-7',
+    category: 'Ensembles',
+    difficulty: 'Easy',
+    question: 'Why is early stopping (monitoring a validation set during boosting rounds) important for Gradient Boosting specifically?',
+    options: [
+      'It is not important; boosting never overfits',
+      'Boosting rounds actively fit the remaining error, so without a stopping point the model can eventually start fitting noise in the training data',
+      'Early stopping is only relevant for neural networks',
+      'It speeds up feature engineering',
+    ],
+    correctIndex: 1,
+    explanation: 'Since each boosting round targets remaining residual error, given enough rounds the model can eventually fit noise. Tracking validation loss and stopping when it stops improving (early_stopping_rounds) prevents this without needing to guess the right n_estimators in advance.',
+  },
+  {
+    id: 'ens-8',
+    category: 'Ensembles',
+    difficulty: 'Hard',
+    question: 'How does "Extremely Randomized Trees" (Extra Trees) differ from standard Random Forest, and what is the practical effect?',
+    options: [
+      'Extra Trees uses boosting instead of bagging',
+      'Extra Trees additionally randomizes the split *threshold* for each candidate feature (not just which features are considered), further decorrelating trees at the cost of slightly higher bias',
+      'Extra Trees does not use decision trees as base learners',
+      'There is no meaningful difference from Random Forest',
+    ],
+    correctIndex: 1,
+    explanation: 'Random Forest picks the *best* threshold for each randomly-selected candidate feature; Extra Trees picks a *random* threshold for each candidate feature and then selects the best among those random splits. This adds even more randomness/decorrelation (often reducing variance further) at some cost to individual tree quality (slightly higher bias), and it trains faster since it skips the exhaustive threshold search.',
+  },
+
+  // ============ Unsupervised Learning ============
   {
     id: 'uns-1',
     category: 'Unsupervised Learning',
+    difficulty: 'Hard',
     question: 'Why is K-Means guaranteed to converge, but only to a local optimum?',
     options: [
       'Because it uses gradient descent with a decaying learning rate',
@@ -190,6 +370,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'uns-2',
     category: 'Unsupervised Learning',
+    difficulty: 'Medium',
     question: 'What is the main advantage of Ward\'s linkage over single linkage in hierarchical clustering?',
     options: [
       'Ward\'s linkage is always faster to compute',
@@ -203,6 +384,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'uns-3',
     category: 'Unsupervised Learning',
+    difficulty: 'Easy',
     question: 'Why must features be standardized before PCA?',
     options: [
       'PCA requires categorical features to be one-hot encoded first',
@@ -216,6 +398,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'uns-4',
     category: 'Unsupervised Learning',
+    difficulty: 'Medium',
     question: 'Is PCA a supervised feature selection method?',
     options: [
       'Yes, it selects the most predictive original features',
@@ -226,10 +409,68 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 1,
     explanation: 'PCA is entirely unsupervised feature extraction — it can discard a low-variance but highly predictive feature since it never looks at the target label. Lasso, by contrast, is supervised feature selection on the original features.',
   },
-  // Deep Learning
+  {
+    id: 'uns-5',
+    category: 'Unsupervised Learning',
+    difficulty: 'Medium',
+    question: 'In DBSCAN, what defines a "core point"?',
+    options: [
+      'Any point that is the centroid of a cluster',
+      'A point that has at least minPts other points (including itself) within distance epsilon of it',
+      'The single point closest to the origin in feature space',
+      'A point that has no neighbors within epsilon',
+    ],
+    correctIndex: 1,
+    explanation: 'Core points have a dense enough neighborhood (≥ minPts within epsilon) to anchor a cluster. Border points are within epsilon of a core point but don\'t meet minPts themselves; noise points are neither — this is how DBSCAN finds arbitrarily-shaped clusters and naturally labels outliers without needing K specified upfront.',
+  },
+  {
+    id: 'uns-6',
+    category: 'Unsupervised Learning',
+    difficulty: 'Hard',
+    question: 'A point has a silhouette score of -0.3. What does the negative sign specifically indicate?',
+    options: [
+      'A computational error occurred; silhouette scores cannot be negative',
+      'The point is, on average, closer to points in a neighboring cluster than to points in its own assigned cluster — it may be mis-clustered',
+      'The point is a perfect representative of its cluster',
+      'The cluster has too few points',
+    ],
+    correctIndex: 1,
+    explanation: 'Silhouette score s = (b-a)/max(a,b), where a = mean distance to same-cluster points and b = mean distance to the nearest other cluster\'s points. A negative score means b < a — the point is actually closer to a different cluster than its own, suggesting it was likely assigned to the wrong cluster.',
+  },
+  {
+    id: 'uns-7',
+    category: 'Unsupervised Learning',
+    difficulty: 'Hard',
+    question: 'Why is it misleading to interpret large distances between well-separated clusters in a t-SNE plot as meaning those clusters are "very different"?',
+    options: [
+      't-SNE plots are always perfectly accurate representations of global structure',
+      't-SNE optimizes to preserve local neighborhood structure, not global distances — the actual inter-cluster distances and even relative cluster sizes in the 2D plot are not reliably meaningful',
+      'This interpretation is completely correct and reliable',
+      't-SNE cannot be used for more than 2 clusters',
+    ],
+    correctIndex: 1,
+    explanation: 't-SNE\'s objective focuses on preserving which points are close neighbors, at the cost of distorting global geometry — cluster sizes, inter-cluster gaps, and even densities in the 2D embedding do not correspond reliably to the original high-dimensional structure. Only relative local neighborhoods should be trusted, not absolute distances or areas.',
+  },
+  {
+    id: 'uns-8',
+    category: 'Unsupervised Learning',
+    difficulty: 'Medium',
+    question: 'What problem does the Gap Statistic address that the basic Elbow Method does not?',
+    options: [
+      'It eliminates the need to compute inertia entirely',
+      'It gives a more principled, quantitative way to identify the optimal K by comparing observed inertia against inertia expected under a null (random uniform) reference distribution',
+      'It only works for hierarchical clustering, not K-Means',
+      'It removes the need for any distance metric',
+    ],
+    correctIndex: 1,
+    explanation: 'The elbow method relies on visually judging where a curve "bends," which is subjective. The Gap Statistic compares the observed within-cluster dispersion to what would be expected from data with no real clustering structure (uniformly random), giving a more objective criterion for choosing K.',
+  },
+
+  // ============ Deep Learning ============
   {
     id: 'dl-1',
     category: 'Deep Learning',
+    difficulty: 'Medium',
     question: 'Why do deep networks with sigmoid activations suffer from vanishing gradients?',
     options: [
       'Sigmoid\'s derivative is at most 0.25 and saturates near 0 for large |z|, so the product of many such terms across layers shrinks exponentially',
@@ -243,6 +484,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'dl-2',
     category: 'Deep Learning',
+    difficulty: 'Medium',
     question: 'What problem do residual (skip) connections in ResNet directly address?',
     options: [
       'They reduce the number of parameters in the network',
@@ -256,6 +498,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'dl-3',
     category: 'Deep Learning',
+    difficulty: 'Hard',
     question: 'In the scaled dot-product attention formula, why divide QK^T by √d_k?',
     options: [
       'To reduce the number of parameters',
@@ -269,6 +512,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'dl-4',
     category: 'Deep Learning',
+    difficulty: 'Medium',
     question: 'Why is self-attention described as permutation-invariant, and what fixes this?',
     options: [
       'Attention scores between the same pair of tokens are unchanged if you permute the input order, so positional encodings must be added to inject order information',
@@ -282,6 +526,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'dl-5',
     category: 'Deep Learning',
+    difficulty: 'Easy',
     question: 'What is the "dying ReLU" problem?',
     options: [
       'ReLU activations always output zero for all inputs',
@@ -292,10 +537,82 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 1,
     explanation: 'ReLU\'s gradient is 0 for z<0. If a large negative bias update pushes a neuron\'s input permanently negative, its gradient is always 0 and it can never recover — Leaky ReLU/GELU address this by allowing a small gradient for negative inputs.',
   },
-  // Statistics / Probability
+  {
+    id: 'dl-6',
+    category: 'Deep Learning',
+    difficulty: 'Medium',
+    question: 'What is the main practical benefit of Batch Normalization during training?',
+    options: [
+      'It removes the need for any activation function',
+      'It normalizes layer inputs to stable mean/variance per mini-batch, which stabilizes and typically speeds up training, and acts as a mild regularizer',
+      'It guarantees the model will never overfit',
+      'It replaces the need for backpropagation',
+    ],
+    correctIndex: 1,
+    explanation: 'By normalizing activations within each mini-batch (then applying a learned scale/shift), BatchNorm reduces sensitivity to initialization and allows higher learning rates, generally speeding convergence; the noise from per-batch statistics also has a mild regularizing effect.',
+  },
+  {
+    id: 'dl-7',
+    category: 'Deep Learning',
+    difficulty: 'Medium',
+    question: 'Dropout randomly zeroes a fraction of neurons during training. What must be done differently at inference time?',
+    options: [
+      'Nothing — dropout is applied identically at inference',
+      'Dropout is turned off, and (in the standard "inverted dropout" implementation) the outputs during training are already scaled so no separate rescaling is needed at inference',
+      'Twice as many neurons must be zeroed at inference',
+      'The entire network must be retrained without dropout for inference',
+    ],
+    correctIndex: 1,
+    explanation: 'At inference, dropout is disabled so the full network is used (approximating an ensemble average of all the "thinned" sub-networks seen during training). Modern frameworks use inverted dropout: during training, kept activations are scaled by 1/(1-p) so that inference requires no rescaling at all.',
+  },
+  {
+    id: 'dl-8',
+    category: 'Deep Learning',
+    difficulty: 'Hard',
+    question: 'For a softmax output layer combined with categorical cross-entropy loss, what is the simplified form of the gradient with respect to the pre-softmax logits?',
+    options: [
+      'It requires computing the full softmax Jacobian matrix explicitly at every step, with no simplification possible',
+      'It simplifies elegantly to (predicted_probabilities − one_hot_true_labels), avoiding the need to ever explicitly form the softmax Jacobian',
+      'The gradient is always zero due to the loss being non-differentiable',
+      'It is identical to the gradient of mean squared error',
+    ],
+    correctIndex: 1,
+    explanation: 'Despite softmax\'s Jacobian being a full matrix (since every output depends on every logit), when combined with cross-entropy loss the chain rule collapses beautifully to ŷ − y (predicted probability vector minus the one-hot true label vector) — a key reason this pairing is used almost universally for multi-class classification.',
+  },
+  {
+    id: 'dl-9',
+    category: 'Deep Learning',
+    difficulty: 'Hard',
+    question: 'Why do Transformers use Layer Normalization instead of Batch Normalization?',
+    options: [
+      'Layer Norm is always faster to compute in every scenario',
+      'Layer Norm normalizes across features within a single sequence position (not across the batch), which is independent of batch size and works well with variable-length sequences and small/large batches alike',
+      'Batch Normalization cannot be implemented in any deep learning framework',
+      'There is no real reason; the choice is arbitrary',
+    ],
+    correctIndex: 1,
+    explanation: 'Batch Norm\'s statistics depend on the batch dimension, which becomes unstable with small batch sizes and awkward with variable-length sequences (padding pollutes the statistics). Layer Norm normalizes across the feature dimension for each individual example/position independently, making it robust to batch size and sequence length variation — ideal for Transformers and RNNs.',
+  },
+  {
+    id: 'dl-10',
+    category: 'Deep Learning',
+    difficulty: 'Easy',
+    question: 'What is gradient clipping used to prevent?',
+    options: [
+      'Vanishing gradients in shallow networks',
+      'Exploding gradients — capping the gradient norm before the parameter update to prevent huge, destabilizing steps',
+      'Overfitting on the training set',
+      'Slow convergence in convex loss functions',
+    ],
+    correctIndex: 1,
+    explanation: 'When gradients (common in RNNs over long sequences) become very large, an update step can wildly overshoot and destabilize training. Gradient clipping rescales the gradient vector to a maximum norm before applying the update, preventing this without changing gradient direction.',
+  },
+
+  // ============ Statistics & Probability ============
   {
     id: 'stat-1',
     category: 'Statistics & Probability',
+    difficulty: 'Medium',
     question: 'What does a p-value of 0.03 actually mean?',
     options: [
       'There is a 3% probability that the null hypothesis is true',
@@ -309,6 +626,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'stat-2',
     category: 'Statistics & Probability',
+    difficulty: 'Hard',
     question: 'A disease affects 1% of a population. A test is 99% sensitive and 95% specific. Given a positive result, why is the probability of actually having the disease still fairly low (~17%)?',
     options: [
       'The test is poorly designed and should be discarded',
@@ -322,6 +640,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'stat-3',
     category: 'Statistics & Probability',
+    difficulty: 'Easy',
     question: 'What increases the statistical power of a hypothesis test (reduces Type II error)?',
     options: [
       'Decreasing the sample size',
@@ -335,6 +654,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'stat-4',
     category: 'Statistics & Probability',
+    difficulty: 'Medium',
     question: 'For count data where the variance is much larger than the mean, why is a Poisson model a poor fit?',
     options: [
       'Poisson distribution requires the mean and variance to be equal; overdispersion violates this assumption',
@@ -348,6 +668,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'stat-5',
     category: 'Statistics & Probability',
+    difficulty: 'Medium',
     question: 'What does a 95% confidence interval actually guarantee?',
     options: [
       'There is a 95% probability the true parameter lies in this specific interval',
@@ -358,10 +679,82 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 1,
     explanation: 'The true parameter is fixed, not random — the interval is what varies across repeated sampling. The 95% refers to the long-run success rate of the interval-construction procedure, not a probability statement about this one interval.',
   },
-  // SQL
+  {
+    id: 'stat-6',
+    category: 'Statistics & Probability',
+    difficulty: 'Hard',
+    question: 'A drug appears to have a lower success rate than a placebo overall, but a HIGHER success rate than the placebo within every individual subgroup (e.g., by age group). How is this possible?',
+    options: [
+      'This is a calculation error and cannot happen',
+      'Simpson\'s Paradox — an unequal, confounded distribution of subgroup sizes between the drug and placebo groups can reverse the aggregate trend relative to every subgroup trend',
+      'The drug must be interacting with itself',
+      'This can only happen with fewer than 10 data points',
+    ],
+    correctIndex: 1,
+    explanation: 'Simpson\'s Paradox occurs when a trend present in every subgroup reverses when the subgroups are aggregated, typically because the subgroups have very different sizes/compositions between the two conditions being compared (a confounding variable). It is a strong argument for always checking results are consistent when segmented and being suspicious of aggregate-only comparisons.',
+  },
+  {
+    id: 'stat-7',
+    category: 'Statistics & Probability',
+    difficulty: 'Medium',
+    question: 'What is bootstrapping, and why is it useful for estimating a statistic\'s uncertainty?',
+    options: [
+      'Repeatedly resampling the observed data with replacement to build an empirical distribution of a statistic, without needing to assume its theoretical sampling distribution',
+      'A method that only works for the sample mean, never other statistics',
+      'A synonym for cross-validation',
+      'A technique used exclusively in deep learning weight initialization',
+    ],
+    correctIndex: 0,
+    explanation: 'Bootstrapping generates many resampled datasets (same size, sampled with replacement from the original data), computes the statistic of interest on each, and uses the resulting distribution to estimate standard errors/confidence intervals — useful when a statistic\'s theoretical sampling distribution is unknown or hard to derive (e.g., the median, or a complex custom metric).',
+  },
+  {
+    id: 'stat-8',
+    category: 'Statistics & Probability',
+    difficulty: 'Medium',
+    question: 'Precisely, what does the Central Limit Theorem state?',
+    options: [
+      'Any dataset, regardless of size, is normally distributed',
+      'The distribution of the sample mean approaches a normal distribution as sample size grows, regardless of the population\'s underlying distribution (given finite variance)',
+      'All statistical tests require normally distributed raw data',
+      'The population mean equals the sample mean for large samples',
+    ],
+    correctIndex: 1,
+    explanation: 'CLT is about the sampling distribution of the mean (or sum), not the raw data\'s distribution — even if individual observations are skewed or non-normal, the distribution of sample means across repeated samples converges to a normal distribution as n grows, which is why z-tests/t-tests on means are broadly justified.',
+  },
+  {
+    id: 'stat-9',
+    category: 'Statistics & Probability',
+    difficulty: 'Medium',
+    question: 'If you lower the significance threshold α from 0.05 to 0.01 without changing anything else, what happens to Type I and Type II error rates?',
+    options: [
+      'Type I error decreases; Type II error typically increases (holding sample size fixed)',
+      'Both Type I and Type II error decrease simultaneously with no tradeoff',
+      'Type I error increases; Type II error decreases',
+      'Neither error rate is affected by changing α',
+    ],
+    correctIndex: 0,
+    explanation: 'Making the significance threshold stricter (smaller α) reduces the chance of falsely rejecting a true null (Type I error), but — for a fixed sample size — it also makes it harder to detect a real effect, increasing the chance of failing to reject a false null (Type II error/lower power). The only way to reduce both simultaneously is to increase sample size.',
+  },
+  {
+    id: 'stat-10',
+    category: 'Statistics & Probability',
+    difficulty: 'Easy',
+    question: 'What is the key difference between covariance and correlation?',
+    options: [
+      'They are exactly the same thing with different names',
+      'Correlation is covariance normalized by the product of the standard deviations, making it unitless and bounded in [-1, 1], while covariance\'s magnitude depends on the variables\' units/scale',
+      'Covariance is always between 0 and 1; correlation can be any real number',
+      'Correlation only applies to time series data',
+    ],
+    correctIndex: 1,
+    explanation: 'Cov(X,Y) depends on the units of X and Y (e.g., rupees × years), making its magnitude hard to interpret across different variable pairs. Correlation = Cov(X,Y)/(σ_X σ_Y) removes the scale dependency, giving a standardized, comparable measure of linear association bounded between -1 and 1.',
+  },
+
+  // ============ SQL ============
   {
     id: 'sql-1',
     category: 'SQL',
+    difficulty: 'Easy',
     question: 'What is the key difference between RANK() and DENSE_RANK() when there are ties?',
     options: [
       'RANK() skips subsequent rank numbers after a tie (1,1,3); DENSE_RANK() does not skip (1,1,2)',
@@ -375,6 +768,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'sql-2',
     category: 'SQL',
+    difficulty: 'Medium',
     question: 'What is the most robust way to find the 2nd highest salary within each department?',
     options: [
       'Use MAX(salary) with a NOT IN subquery excluding the top salary',
@@ -388,6 +782,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'sql-3',
     category: 'SQL',
+    difficulty: 'Medium',
     question: 'Why can joining two tables on a column with duplicate values silently produce incorrect aggregate results?',
     options: [
       'SQL automatically deduplicates before joining',
@@ -401,6 +796,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'sql-4',
     category: 'SQL',
+    difficulty: 'Medium',
     question: 'Why does wrapping an indexed column in a function in the WHERE clause (e.g., WHERE YEAR(order_date) = 2024) hurt performance?',
     options: [
       'It causes a syntax error in most databases',
@@ -411,10 +807,96 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 1,
     explanation: 'Applying a function to an indexed column typically prevents the query planner from using the index directly, since the index is built on the raw column values, not the function\'s output — rewriting as a range condition (order_date >= \'2024-01-01\' AND order_date < \'2025-01-01\') preserves index usage.',
   },
-  // ML System Design / Applied
+  {
+    id: 'sql-5',
+    category: 'SQL',
+    difficulty: 'Easy',
+    question: 'What is the difference between COUNT(*) and COUNT(column_name) in SQL?',
+    options: [
+      'They are always identical',
+      'COUNT(*) counts all rows including those with NULL in any column; COUNT(column_name) counts only rows where that specific column is non-NULL',
+      'COUNT(*) is slower in every database engine',
+      'COUNT(column_name) counts distinct values by default',
+    ],
+    correctIndex: 1,
+    explanation: 'COUNT(*) counts rows regardless of NULLs. COUNT(column_name) skips rows where that column is NULL — a frequent source of subtly wrong "total" counts when a column has missing values.',
+  },
+  {
+    id: 'sql-6',
+    category: 'SQL',
+    difficulty: 'Hard',
+    question: 'What is the standard SQL technique for solving a "gaps and islands" problem (e.g., finding consecutive date streaks per user)?',
+    options: [
+      'Use only GROUP BY on the date column',
+      'Subtract a ROW_NUMBER() (ordered by date, partitioned by user) from the date itself — consecutive dates produce the same constant "group key," which can then be grouped to find island boundaries',
+      'This type of problem cannot be solved in SQL, only in Python',
+      'Use DISTINCT on the user column',
+    ],
+    correctIndex: 1,
+    explanation: 'For consecutive integer/date sequences, (date − ROW_NUMBER()) is constant within an unbroken streak and changes at every gap, turning "find consecutive runs" into a simple GROUP BY on that computed key — a classic, widely-applicable SQL interview pattern.',
+  },
+  {
+    id: 'sql-7',
+    category: 'SQL',
+    difficulty: 'Medium',
+    question: 'When is a correlated subquery likely to perform worse than an equivalent JOIN?',
+    options: [
+      'Never — they always perform identically',
+      'When the correlated subquery must re-execute once per row of the outer query, versus a JOIN which the optimizer can often execute as a single set-based operation (e.g., hash join)',
+      'Correlated subqueries are always faster than joins',
+      'This only matters for NoSQL databases',
+    ],
+    correctIndex: 1,
+    explanation: 'A correlated subquery references a value from the outer query, so naively it must be re-evaluated for every outer row (though modern optimizers sometimes rewrite these into joins automatically). An equivalent JOIN often lets the engine use more efficient set-based join algorithms (hash/merge join) instead of row-by-row re-execution.',
+  },
+  {
+    id: 'sql-8',
+    category: 'SQL',
+    difficulty: 'Easy',
+    question: 'Why can\'t you filter on an aggregate function (like SUM(amount) > 1000) using WHERE, and what should you use instead?',
+    options: [
+      'You can, WHERE works fine with aggregates',
+      'WHERE filters rows before aggregation happens; HAVING filters groups after aggregation, which is when the aggregate value actually exists',
+      'Use ORDER BY instead of WHERE',
+      'Aggregates can never be filtered in SQL at all',
+    ],
+    correctIndex: 1,
+    explanation: 'SQL\'s logical query processing order filters rows with WHERE before GROUP BY/aggregation occurs, so the aggregate value doesn\'t exist yet at that stage. HAVING runs after grouping, when SUM/COUNT/AVG etc. are already computed per group.',
+  },
+  {
+    id: 'sql-9',
+    category: 'SQL',
+    difficulty: 'Hard',
+    question: 'You write `WHERE customer_id NOT IN (SELECT customer_id FROM returns)` to find customers with no returns, but it returns zero rows even though you know some customers have no returns. What is the most likely cause?',
+    options: [
+      'NOT IN has a bug in most SQL engines',
+      'If the subquery\'s result set contains even a single NULL value, NOT IN returns no rows at all (due to SQL\'s three-valued logic) — use NOT EXISTS or filter out NULLs explicitly instead',
+      'The returns table must be empty',
+      'customer_id must be the wrong data type',
+    ],
+    correctIndex: 1,
+    explanation: 'In SQL\'s three-valued logic, `x NOT IN (a, b, NULL)` evaluates to UNKNOWN (not TRUE) for every x, because it\'s equivalent to `x<>a AND x<>b AND x<>NULL`, and any comparison to NULL is UNKNOWN — poisoning the entire AND chain. This is a very common, very subtle real bug; NOT EXISTS with a correlated subquery avoids it entirely.',
+  },
+  {
+    id: 'sql-10',
+    category: 'SQL',
+    difficulty: 'Hard',
+    question: 'By default, does `SUM(amount) OVER (ORDER BY order_date)` (with no explicit frame clause) compute a running total, or the sum of the entire partition?',
+    options: [
+      'The sum of the entire partition, ignoring row order',
+      'A running total — the default frame with ORDER BY present is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
+      'It throws a syntax error without an explicit frame',
+      'It always sums only the current row',
+    ],
+    correctIndex: 1,
+    explanation: 'When ORDER BY is specified in a window without an explicit frame clause, the SQL standard default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, producing a running/cumulative total — a subtlety that surprises people who expect they must always write the frame explicitly to get this behavior.',
+  },
+
+  // ============ ML System Design ============
   {
     id: 'sys-1',
     category: 'ML System Design',
+    difficulty: 'Easy',
     question: 'Why do large-scale recommendation systems use a two-stage retrieval-then-ranking architecture instead of scoring every item with the full ranking model?',
     options: [
       'The full ranking model would be too expensive/slow to run on millions of items per request, so a cheap retrieval stage narrows candidates first',
@@ -428,6 +910,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'sys-2',
     category: 'ML System Design',
+    difficulty: 'Medium',
     question: 'What is "training-serving skew" and why is a feature store used to prevent it?',
     options: [
       'A mismatch between how a feature is computed offline during training versus online at inference time, causing degraded production performance',
@@ -441,6 +924,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'sys-3',
     category: 'ML System Design',
+    difficulty: 'Medium',
     question: 'A recommendation model is trained only on data from items it has previously recommended. What risk does this create?',
     options: [
       'No risk — more data is always better',
@@ -454,6 +938,7 @@ export const quizBank: QuizQuestion[] = [
   {
     id: 'sys-4',
     category: 'ML System Design',
+    difficulty: 'Medium',
     question: 'Why should validation for a time-series forecasting model use rolling-origin (walk-forward) validation instead of random K-fold?',
     options: [
       'Random K-fold is computationally more expensive',
@@ -464,6 +949,519 @@ export const quizBank: QuizQuestion[] = [
     correctIndex: 1,
     explanation: 'Random K-fold shuffles data without regard to time, so a model could be validated on data from before some of its training data — leaking future information. Rolling-origin validation always trains on the past and validates on the future, matching real deployment conditions.',
   },
+  {
+    id: 'sys-5',
+    category: 'ML System Design',
+    difficulty: 'Medium',
+    question: 'What is the purpose of a "shadow deployment" (shadow mode) when rolling out a new ML model?',
+    options: [
+      'It fully replaces the old model in production immediately',
+      'The new model runs alongside the live model on real production traffic, generating predictions that are logged but not shown to users, so its behavior can be validated safely before it affects anyone',
+      'It is only used for A/B testing website colors',
+      'It means the model runs only at night',
+    ],
+    correctIndex: 1,
+    explanation: 'Shadow mode lets you compare a new model\'s predictions against the current production model on live traffic, and monitor for crashes, latency issues, or bizarre outputs — all with zero user-facing risk, before committing to a canary or full rollout.',
+  },
+  {
+    id: 'sys-6',
+    category: 'ML System Design',
+    difficulty: 'Hard',
+    question: 'What is the Population Stability Index (PSI) used for in production ML monitoring?',
+    options: [
+      'Measuring model training time',
+      'Quantifying how much a feature\'s (or a model score\'s) distribution has shifted between a baseline period (e.g., training data) and a current period, to detect data/concept drift',
+      'Counting the number of users in a population',
+      'Measuring server CPU utilization',
+    ],
+    correctIndex: 1,
+    explanation: 'PSI buckets a variable\'s values and compares the proportion of observations in each bucket between two time periods, producing a single number that flags meaningful distributional shift (common thresholds: PSI < 0.1 stable, 0.1–0.25 moderate shift worth investigating, > 0.25 significant shift likely requiring retraining).',
+  },
+  {
+    id: 'sys-7',
+    category: 'ML System Design',
+    difficulty: 'Medium',
+    question: 'Why might an offline metric improvement (e.g., +5% NDCG) fail to translate into an online engagement lift during an A/B test?',
+    options: [
+      'Offline and online metrics always agree perfectly',
+      'Offline evaluation uses historical logged data reflecting the old policy\'s exposure bias, and may not capture real user behavior changes, novelty effects, or misalignment between the offline metric and the true business objective',
+      'A/B tests are always wrong and should be ignored',
+      'This never actually happens in practice',
+    ],
+    correctIndex: 1,
+    explanation: 'Offline metrics are computed against historical data collected under a different (old) policy, so they can be a biased proxy for how a new policy performs on live traffic; there can also be a genuine mismatch between what the offline metric measures (e.g., ranking accuracy) and what actually drives the business KPI (e.g., long-term retention).',
+  },
+  {
+    id: 'sys-8',
+    category: 'ML System Design',
+    difficulty: 'Medium',
+    question: 'What is a common, low-risk strategy for handling a critical ML model service failure/timeout in production?',
+    options: [
+      'Simply return an error to the user with no fallback',
+      'A circuit breaker pattern that falls back to a simpler heuristic or a cached/previous prediction when the primary model times out or errors, rather than blocking or failing the whole request',
+      'Retry the exact same request indefinitely until it succeeds',
+      'Shut down the entire application',
+    ],
+    correctIndex: 1,
+    explanation: 'Production ML services typically need graceful degradation: if the primary model is slow/down, falling back to a simpler rule-based heuristic, a cached recent prediction, or a lightweight backup model keeps the product functional (if slightly less personalized) rather than causing a hard failure for the end user.',
+  },
+
+  // ============ Python & Pandas ============
+  {
+    id: 'py-1',
+    category: 'Python & Pandas',
+    difficulty: 'Medium',
+    question: 'What is wrong with `def add_item(item, bucket=[]): bucket.append(item); return bucket` as a Python function?',
+    options: [
+      'Nothing is wrong; this works exactly as expected on every call',
+      'The default mutable list argument is created once at function definition time and persists/accumulates across calls, not reset fresh each time',
+      'Python does not allow default arguments',
+      'This will raise a SyntaxError',
+    ],
+    correctIndex: 1,
+    explanation: 'Default argument values are evaluated exactly once when the function is defined, not each call. A mutable default (like a list) is shared and mutated across every call that doesn\'t pass its own bucket — a classic Python gotcha. Fix: use `bucket=None` and create a new list inside the function if None.',
+  },
+  {
+    id: 'py-2',
+    category: 'Python & Pandas',
+    difficulty: 'Easy',
+    question: 'What is the main advantage of a generator expression `(x**2 for x in range(1000000))` over a list comprehension `[x**2 for x in range(1000000)]`?',
+    options: [
+      'Generators are always faster for every use case',
+      'Generators produce values lazily one at a time without storing the entire sequence in memory, which matters a lot for very large or infinite sequences',
+      'List comprehensions cannot handle more than 1000 elements',
+      'There is no difference between them',
+    ],
+    correctIndex: 1,
+    explanation: 'A list comprehension builds and stores the full list in memory immediately; a generator expression yields items on demand, using O(1) memory regardless of sequence length — critical when processing very large datasets or streams that don\'t need to be stored in full.',
+  },
+  {
+    id: 'py-3',
+    category: 'Python & Pandas',
+    difficulty: 'Hard',
+    question: 'Why does using Python\'s `threading` module NOT speed up a CPU-bound task (e.g., pure numeric computation in a loop), while `multiprocessing` does?',
+    options: [
+      'Threading is always faster than multiprocessing in Python for any task',
+      'The Global Interpreter Lock (GIL) allows only one thread to execute Python bytecode at a time, so threads don\'t provide true parallelism for CPU-bound work; multiprocessing uses separate processes (and interpreters), each with its own GIL, enabling real parallel CPU usage',
+      'Multiprocessing is not available on Linux',
+      'The GIL only affects I/O-bound tasks, not CPU-bound tasks',
+    ],
+    correctIndex: 1,
+    explanation: 'CPython\'s GIL means only one thread runs Python bytecode at any instant, so multithreading helps mainly for I/O-bound tasks (where threads release the GIL while waiting on I/O) but not CPU-bound number crunching. Multiprocessing sidesteps the GIL entirely by using separate OS processes, each with its own interpreter and memory space, achieving true parallelism at the cost of inter-process communication overhead.',
+  },
+  {
+    id: 'py-4',
+    category: 'Python & Pandas',
+    difficulty: 'Hard',
+    question: 'You run `df[df.age > 30]["salary"] = 100000` and get a `SettingWithCopyWarning`, and the original dataframe doesn\'t actually change. Why?',
+    options: [
+      'This is always a harmless warning that can be ignored',
+      'Chained indexing (`df[...][...] = ...`) may operate on a temporary copy rather than a view of the original data, so the assignment can silently fail to modify the original — use `df.loc[df.age > 30, "salary"] = 100000` instead',
+      'The dataframe is read-only by default',
+      'This only happens with integer indexes',
+    ],
+    correctIndex: 1,
+    explanation: 'Chained indexing creates an intermediate object whose "view vs. copy" status pandas can\'t always guarantee, so the second assignment may act on a copy that is immediately discarded — a real, silent-failure-risk bug. The robust fix is a single `.loc[row_condition, column] = value` call, which unambiguously modifies the original in one step.',
+  },
+  {
+    id: 'py-5',
+    category: 'Python & Pandas',
+    difficulty: 'Medium',
+    question: 'What is the key difference between `groupby(...).apply(func)` and `groupby(...).transform(func)` in pandas?',
+    options: [
+      'They are completely interchangeable in every situation',
+      '`apply` can return a result of any shape (aggregated or not) per group; `transform` must return an output the same length as the input group, making it ideal for broadcasting a group-level statistic back onto every row',
+      '`transform` is always faster regardless of the operation',
+      '`apply` cannot be used with custom functions',
+    ],
+    correctIndex: 1,
+    explanation: '`transform` is specifically designed to return same-length-as-input results (e.g., "each row gets its group\'s mean"), so the result aligns directly back onto the original dataframe\'s index — extremely useful for feature engineering like "customer\'s average order value" as a new column, without a separate merge step.',
+  },
+  {
+    id: 'py-6',
+    category: 'Python & Pandas',
+    difficulty: 'Medium',
+    question: 'What does the `validate` parameter in `pandas.merge()` (e.g., `validate="one_to_many"`) do?',
+    options: [
+      'It automatically fixes duplicate keys by removing them',
+      'It checks that the merge keys actually satisfy the specified cardinality relationship (e.g., one_to_many) and raises an error if violated, catching silent row-explosion bugs early',
+      'It validates that column data types match exactly',
+      'It has no functional effect; it is purely documentation',
+    ],
+    correctIndex: 1,
+    explanation: 'Passing validate="one_to_one", "one_to_many", "many_to_one", or "many_to_many" makes pandas explicitly check the merge keys\' uniqueness on each side and raise a MergeError if the assumption is violated — a cheap, valuable safeguard against the classic "duplicate join key silently inflated my row count" bug.',
+  },
+  {
+    id: 'py-7',
+    category: 'Python & Pandas',
+    difficulty: 'Easy',
+    question: 'Why does converting a low-cardinality string column to pandas\' `category` dtype often save significant memory?',
+    options: [
+      'It compresses the actual string data using gzip',
+      'It stores each unique string value once and represents the column as integer codes referencing that small lookup table, instead of repeating full strings for every row',
+      'It converts strings into floating point numbers, which are always smaller',
+      'It does not save memory in modern pandas versions',
+    ],
+    correctIndex: 1,
+    explanation: 'Category dtype stores a small array of unique categories plus an integer code per row referencing that array — for a column like "country" with 200 unique values across 10 million rows, this is drastically smaller than storing the full string repeatedly for every row.',
+  },
+  {
+    id: 'py-8',
+    category: 'Python & Pandas',
+    difficulty: 'Easy',
+    question: 'Why is `df["col"] = df["col"].apply(lambda x: x * 2)` generally slower than `df["col"] = df["col"] * 2`?',
+    options: [
+      'apply() is always implemented in compiled C and is faster',
+      '.apply() with a Python lambda runs the function once per row via the Python interpreter loop, while the vectorized `* 2` operation runs in optimized, compiled (C/NumPy) code across the whole array at once',
+      'There is no actual performance difference between the two approaches',
+      'The vectorized version only works on integer columns',
+    ],
+    correctIndex: 1,
+    explanation: 'Vectorized pandas/numpy operations push the loop down into compiled C code operating on contiguous memory, avoiding per-element Python function-call overhead. `.apply()` with a Python callable re-enters the Python interpreter for every single row, which is far slower at scale.',
+  },
+  {
+    id: 'py-9',
+    category: 'Python & Pandas',
+    difficulty: 'Easy',
+    question: 'What is the fundamental difference between `.loc[]` and `.iloc[]` in pandas?',
+    options: [
+      'They are exact synonyms',
+      '`.loc` selects by label (index/column names, and is inclusive of the end label in slices); `.iloc` selects by integer position (0-based, exclusive of the end in slices, like standard Python slicing)',
+      '`.iloc` can only be used on the index, never columns',
+      '`.loc` only works with string indexes',
+    ],
+    correctIndex: 1,
+    explanation: '.loc[2:5] includes rows labeled 2 through 5 inclusive (label-based); .iloc[2:5] includes positions 2,3,4 (position-based, end-exclusive, exactly like Python list slicing) — mixing these up is a very common source of off-by-one bugs, especially on non-default/non-integer indexes.',
+  },
+  {
+    id: 'py-10',
+    category: 'Python & Pandas',
+    difficulty: 'Hard',
+    question: 'By default, does `df.groupby("category")["value"].mean()` include or exclude rows where "category" is NaN?',
+    options: [
+      'NaN is treated as its own valid group by default',
+      'Rows with NaN in the grouping column are excluded entirely by default (dropna=True is the pandas default for groupby)',
+      'This raises an error',
+      'NaN rows are always converted to 0 before grouping',
+    ],
+    correctIndex: 1,
+    explanation: 'pandas\' groupby silently drops rows with NaN in any of the grouping keys by default — a subtle, easy-to-miss source of undercounted totals if you don\'t explicitly check for and handle missing group keys (pass dropna=False to include a NaN group explicitly).',
+  },
+
+  // ============ A/B Testing & Experimentation ============
+  {
+    id: 'ab-1',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Medium',
+    question: 'You observe a 48/52 split between control and treatment in an A/B test intended to be 50/50. How do you determine if this is a genuine problem (Sample Ratio Mismatch)?',
+    options: [
+      'A 48/52 split is always fine and never worth checking',
+      'Run a chi-square goodness-of-fit test comparing observed vs. expected allocation counts; a significant result indicates an SRM, meaning something in randomization/logging is broken and results should not be trusted until fixed',
+      'Simply proceed with the analysis; allocation ratio never affects validity',
+      'Only check SRM if the primary metric result looks surprising',
+    ],
+    correctIndex: 1,
+    explanation: 'Even small-looking allocation skews can be statistically significant with large samples and often indicate a real bug (faulty randomization, differential logging/attrition between arms) that can invalidate the entire experiment\'s conclusions — SRM checks should be a standard, automatic part of every experiment\'s health check, run before trusting any result.',
+  },
+  {
+    id: 'ab-2',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Hard',
+    question: 'A team checks their A/B test\'s p-value every day and stops the test the moment it first drops below 0.05. What is wrong with this practice?',
+    options: [
+      'Nothing — checking more often just gives more information',
+      '"Peeking" at results repeatedly and stopping at the first significant result inflates the true false-positive rate far above the nominal 5%, since you get many chances for a random fluctuation to cross the threshold',
+      'This makes the test more statistically powerful',
+      'This is only a problem if the test runs for more than a year',
+    ],
+    correctIndex: 1,
+    explanation: 'Each additional look at the data is another opportunity for random noise to produce a p<0.05 result even when there is no true effect; repeated peeking with early stopping can inflate the effective false-positive rate to 20-30%+ instead of the intended 5%. Fixes: commit to a fixed sample size/duration upfront, or use a proper sequential testing method with alpha-spending.',
+  },
+  {
+    id: 'ab-3',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Hard',
+    question: 'What does CUPED (Controlled-experiment Using Pre-Experiment Data) do, and why is it valuable?',
+    options: [
+      'It replaces the need for randomization entirely',
+      'It uses each user\'s pre-experiment behavior as a covariate to reduce the variance of the metric being measured, allowing the same effect to be detected with less data/shorter test duration',
+      'It only works for binary outcome metrics',
+      'It is a method for choosing the randomization unit',
+    ],
+    correctIndex: 1,
+    explanation: 'CUPED adjusts the outcome metric using its correlation with a pre-experiment covariate (e.g., a user\'s historical conversion rate before the test started), removing variance explained by that covariate — since the covariate is unaffected by the treatment (it\'s from before the experiment), this is a valid, unbiased way to shrink confidence intervals and detect the same effect size faster.',
+  },
+  {
+    id: 'ab-4',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Hard',
+    question: 'You are testing a new feature on a ride-sharing marketplace where drivers and riders interact. Why might standard A/B testing (randomizing individual users) give misleading results here?',
+    options: [
+      'A/B testing never works for marketplace products',
+      'Interference/network effects (SUTVA violation) — a treated user\'s behavior can affect control users sharing the same marketplace (e.g., driver supply), contaminating the control group and biasing the estimated effect',
+      'Marketplaces are too small to ever run experiments',
+      'This is only a problem for advertising products',
+    ],
+    correctIndex: 1,
+    explanation: 'The Stable Unit Treatment Value Assumption (SUTVA) requires one user\'s treatment assignment not to affect another\'s outcome — badly violated in two-sided marketplaces (treated drivers taking rides changes availability for control riders). Cluster-based or geo-based randomization (randomizing whole markets/cities rather than individual users) is a common fix.',
+  },
+  {
+    id: 'ab-5',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Medium',
+    question: 'What is the relationship between Minimum Detectable Effect (MDE) and required sample size in a power analysis?',
+    options: [
+      'They are unrelated; sample size only depends on the significance level',
+      'A smaller MDE (wanting to detect a subtler effect) requires a larger sample size, all else equal — detecting small effects reliably needs much more data',
+      'A larger MDE always requires more data than a smaller MDE',
+      'MDE only matters for observational studies, not A/B tests',
+    ],
+    correctIndex: 1,
+    explanation: 'Required sample size scales roughly with 1/MDE² for a fixed power and significance level — wanting to reliably detect a 1% lift needs vastly more traffic than detecting a 10% lift, which is why teams must explicitly decide the smallest effect size worth detecting before running a power calculation.',
+  },
+  {
+    id: 'ab-6',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Medium',
+    question: 'A new UI redesign shows a strong positive lift in the first 2 days of an A/B test, which fades by day 10. What effect does this likely illustrate?',
+    options: [
+      'The novelty effect — users respond positively to any noticeable change initially, an effect that often fades as the change becomes routine, so short tests can overestimate long-run impact',
+      'This means the feature is a guaranteed long-term success',
+      'The test must have a bug since effects can never fade',
+      'This proves the sample size was too large',
+    ],
+    correctIndex: 0,
+    explanation: 'Novelty effects (and their opposite, primacy/change-aversion effects that fade as familiarity builds) mean early experiment results can be systematically misleading; letting tests run long enough to observe post-novelty steady-state behavior is important before making a permanent rollout decision.',
+  },
+  {
+    id: 'ab-7',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Medium',
+    question: 'You are simultaneously tracking 15 different metrics in one A/B test and looking for any significant result at p<0.05. Why is this problematic?',
+    options: [
+      'It is not problematic; more metrics just means more information',
+      'The multiple comparisons problem — with 15 independent tests each at 5% false-positive rate, the chance of at least one false "significant" result by pure chance is much higher than 5%, inflating the overall false discovery rate',
+      'This only matters if you have fewer than 5 metrics',
+      'Tracking multiple metrics always increases statistical power',
+    ],
+    correctIndex: 1,
+    explanation: 'With 15 independent tests at α=0.05 each, the probability of at least one false positive is roughly 1−(0.95)^15 ≈ 54%, far higher than 5%. Fixes: designate one pre-registered primary metric for the ship/no-ship decision, treat others as directional/exploratory, or apply a multiple-comparison correction (Bonferroni, Benjamini-Hochberg/FDR) if multiple metrics must be formally tested.',
+  },
+  {
+    id: 'ab-8',
+    category: 'A/B Testing & Experimentation',
+    difficulty: 'Medium',
+    question: 'Why would you randomize at the "user" level rather than the "session" or "page-view" level for most product experiments?',
+    options: [
+      'User-level randomization is always technically impossible',
+      'Randomizing at the session/page-view level can expose the same user to both control and treatment across different visits, contaminating their experience and making individual-level effects hard to interpret',
+      'Session-level randomization is always statistically more powerful',
+      'The randomization unit never matters for experiment validity',
+    ],
+    correctIndex: 1,
+    explanation: 'If the same person can land in different arms across sessions, their behavior is influenced by a mix of both experiences, diluting and confounding the measured effect (and undermining user-level analyses like retention). The randomization unit should generally match the level at which you care about a consistent experience and the level at which you\'ll analyze outcomes.',
+  },
+
+  // ============ Case Studies & Product Sense ============
+  {
+    id: 'case-1',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Medium',
+    question: 'When diagnosing "Daily Active Users dropped 15% yesterday," what should be the very first step, before forming business hypotheses?',
+    options: [
+      'Immediately assume a competitor launched something and start building a response',
+      'Sanity-check the data itself — rule out a logging/instrumentation bug, pipeline failure, or timezone/date-boundary issue before concluding it\'s a genuine business problem',
+      'Immediately tell leadership the product is failing',
+      'Re-run the exact same query multiple times until you get a better number',
+    ],
+    correctIndex: 1,
+    explanation: 'A large fraction of sudden, sharp metric drops in real companies turn out to be data/tracking issues (a broken event, a pipeline delay, a timezone bug) rather than genuine user behavior changes — checking this first prevents chasing a nonexistent business problem and wasting the team\'s time.',
+  },
+  {
+    id: 'case-2',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Medium',
+    question: 'A metric drop is confirmed to be real (not a data bug). What is the most useful next diagnostic step?',
+    options: [
+      'Segment the drop by platform, geography, user cohort, and acquisition channel to see if it is concentrated in one slice or uniform across all — this localizes likely causes',
+      'Immediately roll back the most recent deploy without further investigation',
+      'Wait a full month to see if the metric recovers on its own',
+      'Stop looking, since nothing more can be learned',
+    ],
+    correctIndex: 0,
+    explanation: 'A drop concentrated in one segment (e.g., only iOS, only one region) points to a specific proximate cause (an app release, a regional outage) while a uniform drop across all segments suggests something systemic (a broad algorithm change, seasonality, a market-wide shift) — segmentation is the highest-leverage next step in almost any metric investigation.',
+  },
+  {
+    id: 'case-3',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Easy',
+    question: 'What is the difference between a "leading" and a "lagging" indicator for a product metric?',
+    options: [
+      'They are synonyms',
+      'A leading indicator is an early, often noisier signal observable soon after a change (e.g., day-1 engagement); a lagging indicator is the true business outcome, only observable after a longer delay (e.g., 90-day retention or revenue)',
+      'Leading indicators are always more important than lagging indicators',
+      'Lagging indicators can only be measured in real time',
+    ],
+    correctIndex: 1,
+    explanation: 'Leading indicators let teams iterate quickly but are proxies that may not perfectly predict the outcome that actually matters; lagging indicators are the ground truth but take much longer to observe — mature teams track both, using the leading indicator for fast iteration while validating periodically against the lagging one.',
+  },
+  {
+    id: 'case-4',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Medium',
+    question: 'Why do most product teams pick a single "North Star Metric" rather than optimizing many metrics simultaneously?',
+    options: [
+      'It is impossible to measure more than one metric',
+      'A single, well-chosen metric that captures core value delivered to users focuses organizational effort and avoids teams locally optimizing metrics that trade off against each other in unclear ways',
+      'North Star metrics are only used by startups, never large companies',
+      'Multiple metrics always agree with each other by definition',
+    ],
+    correctIndex: 1,
+    explanation: 'Without a unifying metric, different teams can each improve their own local metric while inadvertently harming overall user value (e.g., one team boosts short-term clicks by adding more notifications, hurting long-term retention) — a North Star Metric, paired with guardrails, aligns the whole organization on what actually matters.',
+  },
+  {
+    id: 'case-5',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Easy',
+    question: 'Why does a well-designed experiment or feature launch need "guardrail metrics" in addition to its primary success metric?',
+    options: [
+      'Guardrail metrics are purely for compliance paperwork with no analytical value',
+      'To catch unintended negative side effects that the primary metric alone wouldn\'t reveal, e.g. a feature that boosts short-term engagement but quietly increases churn or complaint rates',
+      'Guardrail metrics replace the need for a primary metric entirely',
+      'They are only relevant for financial/revenue metrics',
+    ],
+    correctIndex: 1,
+    explanation: 'A change can "win" on its target metric while damaging something else important (e.g., an aggressive notification feature raises clicks but tanks long-term retention or increases opt-outs) — guardrail metrics are specifically monitored to catch this kind of collateral damage before a full rollout.',
+  },
+  {
+    id: 'case-6',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Medium',
+    question: 'A dashboard shows that users who see more ads spend more money on the platform. A stakeholder concludes "ads increase spending, let\'s show more ads." What is the analytical flaw?',
+    options: [
+      'There is no flaw; the dashboard proves causation',
+      'This is a correlational observation from observational data — highly engaged/high-spending users may simply naturally see more ads (because they use the app more), rather than ads causing the extra spending; a controlled experiment is needed to establish causation',
+      'Dashboards can never show correlations',
+      'The stakeholder is correct, and this requires no further validation',
+    ],
+    correctIndex: 1,
+    explanation: 'Classic correlation-vs-causation trap: a plausible confounder (overall engagement level) likely drives both ad exposure and spending simultaneously. Only a randomized experiment (or a rigorous quasi-experimental design controlling for the confounder) can establish whether increasing ads actually causes increased spending, versus both being symptoms of the same underlying engagement.',
+  },
+  {
+    id: 'case-7',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Hard',
+    question: 'A retention analysis shows that "users who used feature X in week 1 have 40% higher week-8 retention than users who didn\'t." Why might this overstate feature X\'s true causal impact on retention?',
+    options: [
+      'There is no possible bias here; the number should be trusted directly',
+      'Survivorship/selection bias — users who happened to discover and use feature X in week 1 may already be more engaged, motivated users who were always going to retain better, regardless of the feature itself',
+      'Retention can only be measured over 8 weeks, never validated otherwise',
+      'This proves feature X should be forced on all users immediately',
+    ],
+    correctIndex: 1,
+    explanation: 'Users who opt into or discover a feature early are typically not a random sample — they tend to be more engaged to begin with (self-selection). Comparing them to non-users conflates the feature\'s effect with pre-existing differences between the two groups; a randomized experiment (forcing/exposing feature X to a random subset) is needed to isolate the feature\'s true causal effect.',
+  },
+  {
+    id: 'case-8',
+    category: 'Case Studies & Product Sense',
+    difficulty: 'Hard',
+    question: 'A new "quick checkout" feature increases quick-checkout usage significantly, but overall platform revenue stays flat. What is a likely explanation to investigate?',
+    options: [
+      'The feature must be broken since it shows no effect anywhere',
+      'Cannibalization — the new feature may simply be redirecting purchases that would have happened anyway through the regular checkout flow, rather than creating incremental new revenue',
+      'Revenue and checkout usage are always unrelated metrics',
+      'This means the experiment sample size was too small to detect anything',
+    ],
+    correctIndex: 1,
+    explanation: 'A new feature "winning" on its own adoption metric doesn\'t guarantee incremental value if it substitutes for existing behavior rather than adding to it — checking whether overall conversion/revenue actually increased (not just shifted between checkout paths) is essential before declaring success, a very common trap in feature-level metric analysis.',
+  },
+
+  // ============ Time Series & Forecasting ============
+  {
+    id: 'ts-1',
+    category: 'Time Series & Forecasting',
+    difficulty: 'Medium',
+    question: 'Why does ARIMA require the input series to be (or be transformed to be) stationary?',
+    options: [
+      'Stationarity is not actually required for ARIMA',
+      'ARIMA\'s AR and MA components assume statistical properties (mean, variance, autocorrelation) are constant over time; a non-stationary series (with trend/changing variance) violates this and produces unreliable, spurious model fits',
+      'Stationarity is only required for neural network time series models',
+      'It is only relevant for daily data, not monthly data',
+    ],
+    correctIndex: 1,
+    explanation: 'A non-stationary series\'s statistical properties change over time, so a model assuming fixed autocorrelation structure will fit poorly or spuriously. This is exactly why the "I" (Integrated/differencing) term in ARIMA exists — it transforms a non-stationary series into a (hopefully) stationary one before applying the AR/MA components.',
+  },
+  {
+    id: 'ts-2',
+    category: 'Time Series & Forecasting',
+    difficulty: 'Easy',
+    question: 'What does "differencing" a time series (y_t − y_{t-1}) typically accomplish?',
+    options: [
+      'It removes a linear trend, helping to make the series stationary',
+      'It always removes seasonality entirely',
+      'It has no statistical effect on the series',
+      'It converts a continuous series into a categorical one',
+    ],
+    correctIndex: 0,
+    explanation: 'First-order differencing subtracts each value from its predecessor, which removes a linear trend (a series with constant upward drift becomes roughly constant after differencing) — a standard preprocessing step before fitting ARIMA-family models; seasonal differencing (y_t − y_{t-s}) is used separately to address seasonality.',
+  },
+  {
+    id: 'ts-3',
+    category: 'Time Series & Forecasting',
+    difficulty: 'Medium',
+    question: 'Why is MAPE (Mean Absolute Percentage Error) a problematic metric for a demand forecasting series that includes days with zero actual sales?',
+    options: [
+      'MAPE is undefined (division by zero) whenever the actual value is zero, and becomes extremely unstable for very small actual values',
+      'MAPE always underestimates error',
+      'MAPE cannot be computed for more than 100 data points',
+      'This is not actually a problem for MAPE',
+    ],
+    correctIndex: 0,
+    explanation: 'MAPE divides by the actual value, so a zero-demand period causes a division-by-zero (undefined) term, and very small actual values create huge, dominating percentage errors even for small absolute misses. WMAPE (weighted by total actuals) or MASE (scaled against a naive baseline) are more robust alternatives for intermittent-demand data.',
+  },
+  {
+    id: 'ts-4',
+    category: 'Time Series & Forecasting',
+    difficulty: 'Hard',
+    question: 'What is the practical difference between using the ACF (autocorrelation function) vs. PACF (partial autocorrelation function) plot to choose ARIMA orders?',
+    options: [
+      'They are identical and used interchangeably',
+      'ACF shows correlation between a series and its lags including indirect effects through intermediate lags; PACF removes the effect of shorter lags, isolating the direct correlation at each specific lag — PACF cutoff suggests the AR order, ACF cutoff suggests the MA order',
+      'ACF is only used for seasonal data, PACF only for non-seasonal data',
+      'Neither plot is useful for choosing model orders in practice',
+    ],
+    correctIndex: 1,
+    explanation: 'For a pure AR(p) process, the PACF cuts off sharply after lag p while the ACF decays gradually; for a pure MA(q) process, it\'s the reverse — the ACF cuts off after lag q while the PACF decays gradually. Comparing the shapes of both plots is the classical Box-Jenkins method for identifying candidate (p,d,q) orders before fitting.',
+  },
+  {
+    id: 'ts-5',
+    category: 'Time Series & Forecasting',
+    difficulty: 'Medium',
+    question: 'When would you use a multiplicative rather than an additive seasonal decomposition of a time series?',
+    options: [
+      'Multiplicative decomposition is always the better default choice',
+      'When the magnitude of seasonal fluctuations grows/shrinks proportionally with the overall level of the series (e.g., holiday sales spikes get bigger in absolute terms as baseline sales grow); additive is appropriate when seasonal swings stay roughly constant in absolute size regardless of the trend level',
+      'Multiplicative decomposition can only be used for daily data',
+      'There is no meaningful distinction between the two approaches',
+    ],
+    correctIndex: 1,
+    explanation: 'Additive: y = trend + seasonal + residual (constant-size seasonal swings). Multiplicative: y = trend × seasonal × residual (seasonal swings scale with the series level) — plotting the raw series and checking whether seasonal amplitude visibly grows with the trend is the standard way to pick between them (or applying a log transform to convert a multiplicative pattern into an additive one).',
+  },
+  {
+    id: 'ts-6',
+    category: 'Time Series & Forecasting',
+    difficulty: 'Hard',
+    question: 'You engineer a "7-day rolling average of sales" feature for a forecasting model by computing it over the *entire* dataset (including future dates relative to each row) before doing a train/test split. What is wrong with this?',
+    options: [
+      'Nothing is wrong; rolling averages are always safe to compute upfront',
+      'This leaks future information into features used to predict the past/present — the rolling window for a given row may include data from dates after that row, information that would not actually be available at prediction time in production',
+      'Rolling averages cannot be computed in pandas',
+      'This only matters if the window size is larger than 30 days',
+    ],
+    correctIndex: 1,
+    explanation: 'Any lag/rolling feature must be computed using strictly only data available *before* the prediction time for each row (a "point-in-time correct" feature) — computing rolling statistics globally before splitting, or using a centered rather than trailing window, silently leaks future information into training, producing forecasts that look great in backtesting but fail catastrophically in real deployment where future data genuinely isn\'t available yet.',
+  },
 ]
 
 export const quizCategories = Array.from(new Set(quizBank.map((q) => q.category)))
+export const quizDifficulties = ['Easy', 'Medium', 'Hard'] as const

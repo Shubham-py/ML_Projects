@@ -6,8 +6,10 @@ const navItems = [
   { to: '/algorithms', label: 'Algorithms' },
   { to: '/projects', label: 'Projects' },
   { to: '/interview-prep', label: 'Interview Prep' },
-  { to: '/practice', label: 'Practice Quiz' },
-  { to: '/roadmap', label: '12-Week Roadmap' },
+  { to: '/sql-practice', label: 'SQL Lab' },
+  { to: '/python-practice', label: 'Python Lab' },
+  { to: '/practice', label: 'Quiz' },
+  { to: '/roadmap', label: 'Roadmap' },
 ]
 
 export default function Layout() {
@@ -24,14 +26,14 @@ export default function Layout() {
             <span>DS Interview Lab</span>
           </NavLink>
 
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center flex-wrap justify-end gap-0.5">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  `rounded-md px-2.5 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
                     isActive
                       ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
                       : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-bright)]'
@@ -44,7 +46,7 @@ export default function Layout() {
           </nav>
 
           <button
-            className="md:hidden rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm text-[var(--color-text)]"
+            className="lg:hidden rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm text-[var(--color-text)]"
             onClick={() => setOpen((o) => !o)}
             aria-label="Toggle navigation"
           >
@@ -53,7 +55,7 @@ export default function Layout() {
         </div>
 
         {open && (
-          <nav className="md:hidden border-t border-[var(--color-border)] px-4 py-2 flex flex-col gap-1">
+          <nav className="lg:hidden border-t border-[var(--color-border)] px-4 py-2 flex flex-col gap-1">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}

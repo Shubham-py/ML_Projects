@@ -86,6 +86,15 @@ export default function Roadmap() {
                   </Link>
                 )
               })}
+              {week.labLinks?.map((l) => (
+                <Link
+                  key={l.label}
+                  to={l.to}
+                  className="rounded-md border border-[var(--color-accent-border)] bg-[var(--color-accent-soft)] px-2 py-1 text-xs font-medium text-[var(--color-accent)] hover:opacity-80"
+                >
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
         ))}

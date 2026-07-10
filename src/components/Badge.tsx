@@ -2,8 +2,11 @@ import type { ReactNode } from 'react'
 
 const difficultyColors: Record<string, string> = {
   Beginner: 'bg-emerald-400/10 text-emerald-300 border-emerald-400/30',
+  Easy: 'bg-emerald-400/10 text-emerald-300 border-emerald-400/30',
   Intermediate: 'bg-amber-400/10 text-amber-300 border-amber-400/30',
+  Medium: 'bg-amber-400/10 text-amber-300 border-amber-400/30',
   Advanced: 'bg-rose-400/10 text-rose-300 border-rose-400/30',
+  Hard: 'bg-rose-400/10 text-rose-300 border-rose-400/30',
 }
 
 export function DifficultyBadge({ level }: { level: string }) {

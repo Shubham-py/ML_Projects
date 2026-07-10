@@ -12,6 +12,7 @@ export const roadmap: RoadmapWeek[] = [
     ],
     algorithmSlugs: ['linear-regression', 'regularization'],
     interviewSlugs: ['statistics-probability', 'sql-for-data-science'],
+    labLinks: [{ label: 'SQL Lab: Easy problems', to: '/sql-practice' }],
   },
   {
     week: 2,
@@ -24,6 +25,7 @@ export const roadmap: RoadmapWeek[] = [
     ],
     algorithmSlugs: ['logistic-regression', 'knn', 'naive-bayes'],
     interviewSlugs: ['python-pandas-coding'],
+    labLinks: [{ label: 'Python Lab: Easy problems', to: '/python-practice' }],
   },
   {
     week: 3,
@@ -93,6 +95,7 @@ export const roadmap: RoadmapWeek[] = [
       'Take the Practice Quiz for the Unsupervised + Ensembles categories.',
     ],
     projectSlugs: ['demand-forecasting', 'recommendation-system'],
+    labLinks: [{ label: 'SQL Lab: Medium problems', to: '/sql-practice' }],
   },
   {
     week: 9,
@@ -129,6 +132,10 @@ export const roadmap: RoadmapWeek[] = [
     ],
     interviewSlugs: ['ml-system-design'],
     projectSlugs: ['delivery-eta-prediction', 'resume-screening-nlp'],
+    labLinks: [
+      { label: 'SQL Lab: Hard problems', to: '/sql-practice' },
+      { label: 'Python Lab: Hard problems', to: '/python-practice' },
+    ],
   },
   {
     week: 12,

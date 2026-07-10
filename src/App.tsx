@@ -11,6 +11,8 @@ import Practice from './pages/Practice'
 const AlgorithmDetail = lazy(() => import('./pages/AlgorithmDetail'))
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'))
 const InterviewTopicPage = lazy(() => import('./pages/InterviewTopicPage'))
+const SqlPractice = lazy(() => import('./pages/SqlPractice'))
+const PythonPractice = lazy(() => import('./pages/PythonPractice'))
 
 function PageFallback() {
   return <div className="py-20 text-center text-sm text-[var(--color-text-dim)]">Loading…</div>
@@ -50,6 +52,22 @@ function App() {
         />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="practice" element={<Practice />} />
+        <Route
+          path="sql-practice"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <SqlPractice />
+            </Suspense>
+          }
+        />
+        <Route
+          path="python-practice"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PythonPractice />
+            </Suspense>
+          }
+        />
       </Route>
     </Routes>
   )
