@@ -27,6 +27,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Install and build beat-studio
+        working-directory: beat-studio
+        run: |
+          npm ci
+          npm run build
+      - name: Merge beat-studio into main site output
+        run: cp -r beat-studio/dist dist/beat-studio
       - uses: actions/configure-pages@v5
         with:
           enablement: true

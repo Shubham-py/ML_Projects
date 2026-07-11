@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Fira Code", Menlo, monospace;
+
+  --color-bg: #0a0a10;
+  --color-bg-soft: #101018;
+  --color-bg-card: #14141e;
+  --color-border: #26263a;
+  --color-border-soft: #1c1c28;
+  --color-text: #b8b8c8;
+  --color-text-dim: #75758c;
+  --color-text-bright: #f5f5fa;
+
+  --color-neon-pink: #ff3ea5;
+  --color-neon-cyan: #2ee6d6;
+  --color-neon-purple: #a259ff;
+  --color-neon-yellow: #ffd23e;
+  --color-neon-orange: #ff7a3e;
+
+  --color-accent: #a259ff;
+  --color-accent-soft: #a259ff26;
+  --color-accent-border: #a259ff80;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top, #16101f 0%, var(--color-bg) 55%);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+::selection {
+  background: var(--color-neon-purple);
+  color: #0a0a10;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-dim);
+}
+
+.glow-purple {
+  box-shadow: 0 0 16px 0 rgba(162, 89, 255, 0.35);
+}
+.glow-cyan {
+  box-shadow: 0 0 16px 0 rgba(46, 230, 214, 0.35);
+}
+.glow-pink {
+  box-shadow: 0 0 16px 0 rgba(255, 62, 165, 0.35);
+}
+
+.knob {
+  touch-action: none;
+}
+
+.piano-key-white {
+  background: linear-gradient(to bottom, #f2f2f8, #d8d8e4);
+}
+.piano-key-white:active,
+.piano-key-white.active {
+  background: linear-gradient(to bottom, var(--color-neon-purple), #7a3fd6);
+}
+.piano-key-black {
+  background: linear-gradient(to bottom, #1a1a24, #050508);
+}
+.piano-key-black:active,
+.piano-key-black.active {
+  background: linear-gradient(to bottom, var(--color-neon-cyan), #1a9c90);
+}
+
+.prose-lesson h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-bright);
+  margin: 1.5rem 0 0.6rem;
+}
+.prose-lesson h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text-bright);
+  margin: 1.1rem 0 0.4rem;
+}
+.prose-lesson p {
+  line-height: 1.7;
+  margin: 0.7rem 0;
+}
+.prose-lesson ul {
+  line-height: 1.7;
+  margin: 0.7rem 0;
+  padding-left: 1.3rem;
+  list-style: disc;
+}
+.prose-lesson li {
+  margin: 0.3rem 0;
+}
+.prose-lesson strong {
+  color: var(--color-text-bright);
+}
