@@ -5,6 +5,7 @@ import PianoRoll from '../components/PianoRoll'
 import PianoKeyboard from '../components/PianoKeyboard'
 import EffectsRack from '../components/EffectsRack'
 import ArrangementView from '../components/ArrangementView'
+import InstrumentPanel from '../components/InstrumentPanel'
 import { audioEngine } from '../lib/audioEngine'
 import { useAudioEngine } from '../lib/useAudioEngine'
 import { starterProject, type Project } from '../lib/patterns'
@@ -34,6 +35,7 @@ export default function Studio() {
   const [masterVolume, setMasterVolume] = useState(-6)
   const [isRecording, setIsRecording] = useState(false)
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const projectRef = useRef(project)
   projectRef.current = project
@@ -91,6 +93,47 @@ export default function Studio() {
     audioEngine.setMasterVolume(masterVolume)
   }, [masterVolume])
 
+  // Instrument/plugin swaps and their params — pushed to the engine whenever they change.
+  useEffect(() => {
+    audioEngine.setBassInstrument(project.bassInstrument.type, project.bassInstrument.params)
+  }, [project.bassInstrument.type])
+
+  useEffect(() => {
+    audioEngine.setBassParams(project.bassInstrument.params)
+  }, [project.bassInstrument.params])
+
+  useEffect(() => {
+    audioEngine.setLeadInstrument(project.leadInstrument.type, project.leadInstrument.params)
+  }, [project.leadInstrument.type])
+
+  useEffect(() => {
+    audioEngine.setLeadParams(project.leadInstrument.params)
+  }, [project.leadInstrument.params])
+
+  useEffect(() => {
+    audioEngine.setKeysInstrument(project.keysInstrument.type, project.keysInstrument.params)
+  }, [project.keysInstrument.type])
+
+  useEffect(() => {
+    audioEngine.setKeysParams(project.keysInstrument.params)
+  }, [project.keysInstrument.params])
+
+  useEffect(() => {
+    audioEngine.setBassFilterCutoff(project.bassFilterHz)
+  }, [project.bassFilterHz])
+
+  useEffect(() => {
+    audioEngine.setLeadFilterCutoff(project.leadFilterHz)
+  }, [project.leadFilterHz])
+
+  useEffect(() => {
+    audioEngine.setWobbleEnabled(project.wobbleEnabled)
+  }, [project.wobbleEnabled])
+
+  useEffect(() => {
+    audioEngine.setWobbleRate(project.wobbleRate)
+  }, [project.wobbleRate])
+
   const togglePlay = async () => {
     await ensureStarted()
     if (isPlaying) {
@@ -145,6 +188,38 @@ export default function Studio() {
     setActivePatternId(fresh.patterns[0].id)
   }
 
+  const exportProject = () => {
+    const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${project.name.replace(/\s+/g, '-').toLowerCase()}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const importProject = async (file: File) => {
+    try {
+      const text = await file.text()
+      const parsed = JSON.parse(text)
+      if (!Array.isArray(parsed?.patterns) || parsed.patterns.length === 0) {
+        throw new Error('Missing patterns array')
+      }
+      if (isPlaying) {
+        audioEngine.stop()
+        setIsPlaying(false)
+      }
+      const merged: Project = { ...starterProject(), ...parsed }
+      setProject(merged)
+      setActivePatternId(merged.patterns[0].id)
+      setSaveStatus('Imported!')
+      setTimeout(() => setSaveStatus(null), 1500)
+    } catch {
+      setSaveStatus('Import failed — not a valid project file')
+      setTimeout(() => setSaveStatus(null), 2500)
+    }
+  }
+
   const tabs: { key: Tab; label: string }[] = [
     { key: 'drums', label: 'Drums' },
     { key: 'bass', label: 'Bass' },
@@ -156,6 +231,18 @@ export default function Studio() {
 
   return (
     <div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) importProject(file)
+          e.target.value = ''
+        }}
+      />
+
       <TransportBar
         isPlaying={isPlaying}
         onTogglePlay={togglePlay}
@@ -171,6 +258,8 @@ export default function Studio() {
         onProjectNameChange={(name) => setProject((p) => ({ ...p, name }))}
         onSave={saveProject}
         onNew={newProject}
+        onExport={exportProject}
+        onImportClick={() => fileInputRef.current?.click()}
         saveStatus={saveStatus}
       />
 
@@ -201,42 +290,121 @@ export default function Studio() {
       )}
 
       {tab === 'bass' && (
-        <PianoRoll
-          label="Bass"
-          color="var(--color-neon-purple)"
-          notes={activePattern.bass}
-          onChange={(bass) => updateActivePattern((p) => ({ ...p, bass }))}
-          scaleKey="minor"
-          rootNote="A"
-          baseOctave={1}
-          currentStep={currentStep}
-          onPreview={async (note) => {
-            await ensureStarted()
-            audioEngine.noteOn(note)
-            setTimeout(() => audioEngine.noteOff(note), 200)
-          }}
-        />
+        <div className="space-y-4">
+          <InstrumentPanel
+            label="Bass"
+            color="var(--color-neon-purple)"
+            settings={project.bassInstrument}
+            onChange={(bassInstrument) => setProject((p) => ({ ...p, bassInstrument }))}
+          />
+          <label className="flex max-w-sm flex-col gap-1 text-xs text-[var(--color-text-dim)]">
+            <span>Filter cutoff ({Math.round(project.bassFilterHz)} Hz)</span>
+            <input
+              type="range"
+              min={80}
+              max={4000}
+              step={10}
+              value={project.bassFilterHz}
+              onChange={(e) => setProject((p) => ({ ...p, bassFilterHz: Number(e.target.value) }))}
+              className="accent-[var(--color-neon-purple)]"
+            />
+          </label>
+          <PianoRoll
+            label="Bass"
+            color="var(--color-neon-purple)"
+            notes={activePattern.bass}
+            onChange={(bass) => updateActivePattern((p) => ({ ...p, bass }))}
+            scaleKey="minor"
+            rootNote="A"
+            baseOctave={1}
+            currentStep={currentStep}
+            onPreview={async (note) => {
+              await ensureStarted()
+              audioEngine.previewBass(note)
+            }}
+          />
+        </div>
       )}
 
       {tab === 'lead' && (
-        <PianoRoll
-          label="Lead"
-          color="var(--color-neon-yellow)"
-          notes={activePattern.lead}
-          onChange={(lead) => updateActivePattern((p) => ({ ...p, lead }))}
-          scaleKey="minor"
-          rootNote="A"
-          baseOctave={3}
-          currentStep={currentStep}
-          onPreview={async (note) => {
-            await ensureStarted()
-            audioEngine.noteOn(note)
-            setTimeout(() => audioEngine.noteOff(note), 200)
-          }}
-        />
+        <div className="space-y-4">
+          <InstrumentPanel
+            label="Lead"
+            color="var(--color-neon-yellow)"
+            settings={project.leadInstrument}
+            onChange={(leadInstrument) => setProject((p) => ({ ...p, leadInstrument }))}
+          />
+          <div className="flex flex-wrap items-end gap-6">
+            <label className="flex max-w-sm flex-1 flex-col gap-1 text-xs text-[var(--color-text-dim)]">
+              <span>Filter cutoff ({Math.round(project.leadFilterHz)} Hz)</span>
+              <input
+                type="range"
+                min={200}
+                max={8000}
+                step={10}
+                value={project.leadFilterHz}
+                onChange={(e) => setProject((p) => ({ ...p, leadFilterHz: Number(e.target.value) }))}
+                className="accent-[var(--color-neon-yellow)]"
+              />
+            </label>
+            <label className="flex items-center gap-2 text-xs text-[var(--color-text-dim)]">
+              <input
+                type="checkbox"
+                checked={project.wobbleEnabled}
+                onChange={(e) => setProject((p) => ({ ...p, wobbleEnabled: e.target.checked }))}
+                className="accent-[var(--color-neon-yellow)]"
+              />
+              Wobble (LFO on filter cutoff)
+            </label>
+            {project.wobbleEnabled && (
+              <div className="flex gap-2">
+                {['4n', '8n', '16n', '8t'].map((rate) => (
+                  <button
+                    key={rate}
+                    onClick={() => setProject((p) => ({ ...p, wobbleRate: rate }))}
+                    className={`rounded-full border px-2.5 py-1 text-xs ${
+                      project.wobbleRate === rate ? 'border-[var(--color-neon-yellow)] text-[var(--color-neon-yellow)]' : 'border-[var(--color-border)] text-[var(--color-text-dim)]'
+                    }`}
+                  >
+                    {rate}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <PianoRoll
+            label="Lead"
+            color="var(--color-neon-yellow)"
+            notes={activePattern.lead}
+            onChange={(lead) => updateActivePattern((p) => ({ ...p, lead }))}
+            scaleKey="minor"
+            rootNote="A"
+            baseOctave={3}
+            currentStep={currentStep}
+            onPreview={async (note) => {
+              await ensureStarted()
+              audioEngine.previewLead(note)
+            }}
+          />
+        </div>
       )}
 
-      {tab === 'keys' && <PianoKeyboard />}
+      {tab === 'keys' && (
+        <div className="space-y-4">
+          <InstrumentPanel
+            label="Keys"
+            color="var(--color-neon-cyan)"
+            allowPluck={false}
+            settings={project.keysInstrument}
+            onChange={(keysInstrument) => setProject((p) => ({ ...p, keysInstrument }))}
+          />
+          <PianoKeyboard
+            showEnvelope={project.keysInstrument.type === 'analog' || project.keysInstrument.type === 'fm' || project.keysInstrument.type === 'am'}
+            envelope={project.keysEnvelope}
+            onEnvelopeChange={(keysEnvelope) => setProject((p) => ({ ...p, keysEnvelope }))}
+          />
+        </div>
+      )}
 
       {tab === 'effects' && (
         <EffectsRack

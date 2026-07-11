@@ -1,5 +1,6 @@
 import { DRUM_VOICES, type DrumVoice } from './musicTheory'
 import { emptyDrumPattern, emptyMelodyPattern, STEPS_PER_PATTERN, type DrumPattern } from './audioEngine'
+import { defaultInstrument, type InstrumentSettings } from './instruments'
 
 export interface Pattern {
   id: string
@@ -99,6 +100,14 @@ export interface Project {
   sidechainEnabled: boolean
   reverbWet: number
   delayWet: number
+  bassInstrument: InstrumentSettings
+  leadInstrument: InstrumentSettings
+  keysInstrument: InstrumentSettings
+  bassFilterHz: number
+  leadFilterHz: number
+  wobbleEnabled: boolean
+  wobbleRate: string
+  keysEnvelope: { attack: number; decay: number; sustain: number; release: number }
 }
 
 export function starterProject(): Project {
@@ -112,6 +121,14 @@ export function starterProject(): Project {
     sidechainEnabled: true,
     reverbWet: 0.15,
     delayWet: 0.1,
+    bassInstrument: defaultInstrument('analog'),
+    leadInstrument: defaultInstrument('analog'),
+    keysInstrument: defaultInstrument('analog'),
+    bassFilterHz: 400,
+    leadFilterHz: 800,
+    wobbleEnabled: false,
+    wobbleRate: '16n',
+    keysEnvelope: { attack: 0.01, decay: 0.25, sustain: 0.35, release: 0.9 },
   }
 }
 

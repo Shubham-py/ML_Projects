@@ -13,6 +13,8 @@ interface TransportBarProps {
   onProjectNameChange: (name: string) => void
   onSave: () => void
   onNew: () => void
+  onExport: () => void
+  onImportClick: () => void
   saveStatus: string | null
 }
 
@@ -31,6 +33,8 @@ export default function TransportBar({
   onProjectNameChange,
   onSave,
   onNew,
+  onExport,
+  onImportClick,
   saveStatus,
 }: TransportBarProps) {
   return (
@@ -116,6 +120,18 @@ export default function TransportBar({
         className="rounded-md border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text-dim)] hover:text-[var(--color-text-bright)]"
       >
         New
+      </button>
+      <button
+        onClick={onExport}
+        className="rounded-md border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text-dim)] hover:text-[var(--color-text-bright)]"
+      >
+        Export
+      </button>
+      <button
+        onClick={onImportClick}
+        className="rounded-md border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text-dim)] hover:text-[var(--color-text-bright)]"
+      >
+        Import
       </button>
       {saveStatus && <span className="text-xs text-[var(--color-neon-cyan)]">{saveStatus}</span>}
     </div>

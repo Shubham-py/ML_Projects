@@ -1,5 +1,6 @@
 import * as Tone from 'tone'
 import { DRUM_VOICES, type DrumVoice } from './musicTheory'
+import { applyParams, createMonoVoice, createPolyVoice, type InstrumentType, type MonoVoice } from './instruments'
 
 export const STEPS_PER_PATTERN = 16
 
@@ -17,7 +18,6 @@ export function emptyMelodyPattern(): (string | null)[] {
 
 type StepListener = (step: number) => void
 type SectionListener = (sectionIndex: number) => void
-export type BasicOscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle'
 
 class AudioEngine {
   private ready = false
@@ -30,27 +30,20 @@ class AudioEngine {
   private limiter = new Tone.Limiter(-1)
   private recorder = new Tone.Recorder()
 
-  private keysSynth = new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: 'sawtooth' },
-    envelope: { attack: 0.01, decay: 0.25, sustain: 0.35, release: 0.9 },
-  })
+  private keysVoice: Tone.PolySynth = createPolyVoice('analog')
+  private keysInstrumentType: InstrumentType = 'analog'
 
-  private bassSynth = new Tone.MonoSynth({
-    oscillator: { type: 'sawtooth' },
-    filter: { Q: 2, type: 'lowpass', rolloff: -24 },
-    envelope: { attack: 0.01, decay: 0.15, sustain: 0.6, release: 0.3 },
-    filterEnvelope: { attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.3, baseFrequency: 80, octaves: 3 },
-  })
+  private bassVoice: MonoVoice = createMonoVoice('analog')
+  private bassInstrumentType: InstrumentType = 'analog'
+  private bassFilter = new Tone.Filter({ frequency: 400, type: 'lowpass', rolloff: -24, Q: 2 })
 
-  private leadSynth = new Tone.MonoSynth({
-    oscillator: { type: 'sawtooth' },
-    filter: { Q: 1, type: 'lowpass', rolloff: -12 },
-    envelope: { attack: 0.02, decay: 0.3, sustain: 0.5, release: 0.6 },
-    filterEnvelope: { attack: 0.02, decay: 0.4, sustain: 0.5, release: 0.6, baseFrequency: 400, octaves: 4 },
-  })
+  private leadVoice: MonoVoice = createMonoVoice('analog')
+  private leadInstrumentType: InstrumentType = 'analog'
+  private leadFilter = new Tone.Filter({ frequency: 800, type: 'lowpass', rolloff: -12, Q: 1 })
 
   private wobbleLfo = new Tone.LFO({ frequency: '8n', min: 200, max: 3000 })
   private wobbleEnabled = false
+  private leadFilterBaseHz = 800
 
   private kick = new Tone.MembraneSynth({ pitchDecay: 0.045, octaves: 6, envelope: { attack: 0.001, decay: 0.35, sustain: 0 } })
   private snareNoise = new Tone.NoiseSynth({ noise: { type: 'white' }, envelope: { attack: 0.001, decay: 0.18, sustain: 0 } })
@@ -82,17 +75,15 @@ class AudioEngine {
     this.masterGain.chain(this.duck, this.masterFilter, this.delay, this.reverb, this.limiter, Tone.getDestination())
     this.limiter.connect(this.recorder)
 
-    this.keysSynth.connect(this.masterGain)
-    this.bassSynth.connect(this.masterGain)
-    this.leadSynth.connect(this.masterGain)
+    this.keysVoice.connect(this.masterGain)
+    this.bassVoice.chain(this.bassFilter, this.masterGain)
+    this.leadVoice.chain(this.leadFilter, this.masterGain)
     this.kick.connect(this.masterGain)
     this.snareNoise.chain(this.snareFilter, this.masterGain)
     this.hatClosed.connect(this.masterGain)
     this.hatOpen.connect(this.masterGain)
     this.clapNoise.connect(this.masterGain)
     this.tom.connect(this.masterGain)
-
-    this.wobbleLfo.connect(this.leadSynth.filter.frequency)
 
     Tone.getTransport().bpm.value = 126
   }
@@ -162,9 +153,9 @@ class AudioEngine {
       if (this.drumPattern[voice][step]) this.triggerDrum(voice, time)
     }
     const bassNote = this.bassPattern[step]
-    if (bassNote) this.bassSynth.triggerAttackRelease(bassNote, '16n', time)
+    if (bassNote) this.bassVoice.triggerAttackRelease(bassNote, '16n', time)
     const leadNote = this.leadPattern[step]
-    if (leadNote) this.leadSynth.triggerAttackRelease(leadNote, '8n', time)
+    if (leadNote) this.leadVoice.triggerAttackRelease(leadNote, '8n', time)
 
     Tone.getDraw().schedule(() => this.stepListeners.forEach((l) => l(step)), time)
 
@@ -248,41 +239,95 @@ class AudioEngine {
   // ---------- Keys synth (live playable) ----------
 
   noteOn(note: string, velocity = 0.9) {
-    this.keysSynth.triggerAttack(note, undefined, velocity)
+    this.keysVoice.triggerAttack(note, undefined, velocity)
   }
 
   noteOff(note: string) {
-    this.keysSynth.triggerRelease(note)
+    this.keysVoice.triggerRelease(note)
   }
 
-  setKeysOscillator(type: BasicOscillatorType) {
-    this.keysSynth.set({ oscillator: { type } })
+  previewBass(note: string, duration = '8n') {
+    this.bassVoice.triggerAttackRelease(note, duration)
+  }
+
+  previewLead(note: string, duration = '8n') {
+    this.leadVoice.triggerAttackRelease(note, duration)
   }
 
   setKeysEnvelope(partial: Partial<{ attack: number; decay: number; sustain: number; release: number }>) {
-    this.keysSynth.set({ envelope: partial })
+    this.keysVoice.set({ envelope: partial } as never)
   }
 
-  // ---------- Bass / Lead synth params ----------
+  setKeysInstrument(type: InstrumentType, params: Record<string, number | string>) {
+    this.keysVoice.disconnect()
+    this.keysVoice.dispose()
+    this.keysVoice = createPolyVoice(type)
+    this.keysVoice.connect(this.masterGain)
+    this.keysInstrumentType = type
+    applyParams(this.keysVoice, type === 'pluck' ? 'analog' : type, params)
+  }
+
+  setKeysParams(params: Record<string, number | string>) {
+    applyParams(this.keysVoice, this.keysInstrumentType === 'pluck' ? 'analog' : this.keysInstrumentType, params)
+  }
+
+  // ---------- Bass / Lead instruments ----------
+
+  setBassInstrument(type: InstrumentType, params: Record<string, number | string>) {
+    this.bassVoice.disconnect()
+    this.bassVoice.dispose()
+    this.bassVoice = createMonoVoice(type)
+    this.bassVoice.chain(this.bassFilter, this.masterGain)
+    this.bassInstrumentType = type
+    applyParams(this.bassVoice, type, params)
+  }
+
+  setBassParams(params: Record<string, number | string>) {
+    applyParams(this.bassVoice, this.bassInstrumentType, params)
+  }
 
   setBassFilterCutoff(hz: number) {
-    this.bassSynth.filter.frequency.rampTo(hz, 0.05)
+    this.bassFilter.frequency.rampTo(hz, 0.05)
   }
 
-  setBassOscillator(type: BasicOscillatorType) {
-    this.bassSynth.set({ oscillator: { type } })
+  setLeadInstrument(type: InstrumentType, params: Record<string, number | string>) {
+    this.leadVoice.disconnect()
+    this.leadVoice.dispose()
+    this.leadVoice = createMonoVoice(type)
+    this.leadVoice.chain(this.leadFilter, this.masterGain)
+    this.leadInstrumentType = type
+    applyParams(this.leadVoice, type, params)
   }
 
-  setLeadOscillator(type: BasicOscillatorType) {
-    this.leadSynth.set({ oscillator: { type } })
+  setLeadParams(params: Record<string, number | string>) {
+    applyParams(this.leadVoice, this.leadInstrumentType, params)
+  }
+
+  setLeadFilterCutoff(hz: number) {
+    this.leadFilterBaseHz = hz
+    if (this.wobbleEnabled) {
+      // Connecting the LFO marks this signal "overridden" (Tone.js doesn't clear that flag on
+      // disconnect), so briefly detach and reset it to let the ramp land, then reattach.
+      this.wobbleLfo.disconnect(this.leadFilter.frequency)
+      this.leadFilter.frequency.overridden = false
+      this.leadFilter.frequency.rampTo(hz, 0.05)
+      this.wobbleLfo.connect(this.leadFilter.frequency)
+    } else {
+      this.leadFilter.frequency.rampTo(hz, 0.05)
+    }
   }
 
   setWobbleEnabled(enabled: boolean) {
+    if (enabled === this.wobbleEnabled) return
     this.wobbleEnabled = enabled
-    if (enabled) this.wobbleLfo.start()
-    else {
+    if (enabled) {
+      this.wobbleLfo.connect(this.leadFilter.frequency)
+      this.wobbleLfo.start()
+    } else {
       this.wobbleLfo.stop()
-      this.leadSynth.filter.frequency.rampTo(800, 0.1)
+      this.wobbleLfo.disconnect(this.leadFilter.frequency)
+      this.leadFilter.frequency.overridden = false
+      this.leadFilter.frequency.rampTo(this.leadFilterBaseHz, 0.1)
     }
   }
 
@@ -310,11 +355,6 @@ class AudioEngine {
 
   setMasterFilterCutoff(hz: number) {
     this.masterFilter.frequency.rampTo(hz, 0.05)
-  }
-
-  async previewNote(note = 'C4') {
-    await this.start()
-    this.keysSynth.triggerAttackRelease(note, '8n')
   }
 
   // ---------- Real-time recording (captures exactly what you hear) ----------

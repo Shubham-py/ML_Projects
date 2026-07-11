@@ -15,14 +15,23 @@ const BLACK_KEYS: { offset: number; whiteIndexBefore: number }[] = [
   { offset: 15, whiteIndexBefore: 8 },
 ]
 
-const OSCILLATOR_TYPES = ['sawtooth', 'square', 'sine', 'triangle'] as const
+interface Envelope {
+  attack: number
+  decay: number
+  sustain: number
+  release: number
+}
 
-export default function PianoKeyboard() {
+interface PianoKeyboardProps {
+  showEnvelope: boolean
+  envelope: Envelope
+  onEnvelopeChange: (envelope: Envelope) => void
+}
+
+export default function PianoKeyboard({ showEnvelope, envelope, onEnvelopeChange }: PianoKeyboardProps) {
   const { ensureStarted } = useAudioEngine()
   const [octave, setOctave] = useState(3)
   const [activeOffsets, setActiveOffsets] = useState<Set<number>>(new Set())
-  const [oscType, setOscType] = useState<(typeof OSCILLATOR_TYPES)[number]>('sawtooth')
-  const [envelope, setEnvelope] = useState({ attack: 0.01, decay: 0.25, sustain: 0.35, release: 0.9 })
 
   const rootMidi = noteNameToMidi('C', octave)
 
@@ -71,60 +80,42 @@ export default function PianoKeyboard() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--color-text-dim)]">
-        <div className="flex items-center gap-2">
-          <span>Octave</span>
-          <button onClick={() => setOctave((o) => Math.max(1, o - 1))} className="rounded border border-[var(--color-border)] px-2 py-1">
-            −
-          </button>
-          <span className="w-4 text-center text-[var(--color-text-bright)]">{octave}</span>
-          <button onClick={() => setOctave((o) => Math.min(6, o + 1))} className="rounded border border-[var(--color-border)] px-2 py-1">
-            +
-          </button>
-        </div>
+      <div className="flex items-center gap-2 text-xs text-[var(--color-text-dim)]">
+        <span>Octave</span>
+        <button onClick={() => setOctave((o) => Math.max(1, o - 1))} className="rounded border border-[var(--color-border)] px-2 py-1">
+          −
+        </button>
+        <span className="w-4 text-center text-[var(--color-text-bright)]">{octave}</span>
+        <button onClick={() => setOctave((o) => Math.min(6, o + 1))} className="rounded border border-[var(--color-border)] px-2 py-1">
+          +
+        </button>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <span>Waveform</span>
-          {OSCILLATOR_TYPES.map((type) => (
-            <button
-              key={type}
-              onClick={() => {
-                setOscType(type)
-                audioEngine.setKeysOscillator(type)
-              }}
-              className={`rounded-full border px-2.5 py-1 capitalize ${
-                oscType === type ? 'border-[var(--color-neon-purple)] text-[var(--color-neon-purple)]' : 'border-[var(--color-border)]'
-              }`}
-            >
-              {type}
-            </button>
+      {showEnvelope && (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {(['attack', 'decay', 'sustain', 'release'] as const).map((param) => (
+            <label key={param} className="flex flex-col gap-1 text-xs text-[var(--color-text-dim)]">
+              <span className="capitalize">
+                {param} ({envelope[param].toFixed(2)})
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={param === 'sustain' ? 1 : 2}
+                step={0.01}
+                value={envelope[param]}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  const next = { ...envelope, [param]: value }
+                  onEnvelopeChange(next)
+                  audioEngine.setKeysEnvelope({ [param]: value })
+                }}
+                className="accent-[var(--color-neon-purple)]"
+              />
+            </label>
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {(['attack', 'decay', 'sustain', 'release'] as const).map((param) => (
-          <label key={param} className="flex flex-col gap-1 text-xs text-[var(--color-text-dim)]">
-            <span className="capitalize">
-              {param} ({envelope[param].toFixed(2)})
-            </span>
-            <input
-              type="range"
-              min={0}
-              max={param === 'sustain' ? 1 : 2}
-              step={0.01}
-              value={envelope[param]}
-              onChange={(e) => {
-                const value = Number(e.target.value)
-                const next = { ...envelope, [param]: value }
-                setEnvelope(next)
-                audioEngine.setKeysEnvelope({ [param]: value })
-              }}
-              className="accent-[var(--color-neon-purple)]"
-            />
-          </label>
-        ))}
-      </div>
+      )}
 
       <div className="relative h-40 w-full select-none">
         <div className="flex h-full w-full gap-0.5">
